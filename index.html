@@ -91,8 +91,12 @@
         }
         
         /* Dragging visual feedback */
-        .sortable-ghost { opacity: 0.4; }
-        .sortable-drag { cursor: grabbing !important; }
+        .sortable-ghost { opacity: 0.3 !important; }
+        .sortable-drag { 
+            cursor: grabbing !important; 
+            z-index: 9999 !important; /* Keep floating element above everything */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.08) !important;
+        }
 
         /* Pop-in animation for instant feedback */
         @keyframes popIn {
@@ -325,10 +329,18 @@
                     animation: 150,
                     ghostClass: 'sortable-ghost',
                     dragClass: 'sortable-drag',
-                    delay: 100, 
-                    delayOnTouchOnly: true,
+                    delay: 250, // 250ms "Press and hold" threshold for touch devices
+                    delayOnTouchOnly: true, // Desktop remains instant
+                    forceFallback: true, // CRITICAL: Bypasses native HTML drag to allow 2-finger scroll
+                    fallbackClass: 'sortable-drag',
+                    fallbackOnBody: true, // Prevents clipping issues while scrolling
+                    scroll: true,
+                    filter: 'button, .color-btn, .gender-btn', // Ignore drags starting on icons
+                    preventOnFilter: false, // Allow normal clicking on filtered elements
                     onStart: function () {
                         isInteracting = true; 
+                        // Force close any active text edits to prevent highlighting glitches
+                        document.querySelectorAll('.text-input[contenteditable="true"]').forEach(el => el.blur());
                     },
                     onEnd: function (evt) {
                         isInteracting = false;
@@ -376,6 +388,16 @@
                 isInteracting = false;
                 updateBedText(bed.id, e.target.innerText);
             };
+
+            // ONLY block drag if actively typing inside the text box.
+            // If locked, let the event pass so they can press and hold to drag!
+            const preventDragWhileEditing = (e) => {
+                if (textDiv.contentEditable === "true") {
+                    e.stopPropagation(); 
+                }
+            };
+            textDiv.onmousedown = preventDragWhileEditing; 
+            textDiv.ontouchstart = preventDragWhileEditing;
 
             // Color Change Button (Absolute top right, Huge size)
             const colorBtn = document.createElement('button');
