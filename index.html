@@ -175,6 +175,25 @@
         <button onclick="addWard()" class="mt-8 w-full py-4 border-2 border-dashed border-gray-400 bg-white/40 backdrop-blur-sm rounded-2xl text-gray-600 font-semibold hover:bg-white/60 hover:text-gray-800 transition-colors flex items-center justify-center gap-2 shadow-sm">
             <i class="ph ph-plus-circle text-xl"></i> Add New Ward
         </button>
+
+        <!-- Transfer Modal for Touch Devices -->
+        <div id="transfer-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] hidden items-center justify-center p-4 transition-all duration-200 opacity-0">
+            <div class="bg-white/95 backdrop-blur-xl border border-white/60 rounded-2xl shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-all duration-200" id="transfer-modal-content">
+                <div class="flex justify-between items-center mb-4 border-b border-gray-200/60 pb-3">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                        <i class="ph-bold ph-arrows-left-right text-blue-500"></i> Transfer Patient
+                    </h3>
+                    <button onclick="closeTransferModal()" class="text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full p-1.5 transition-colors">
+                        <i class="ph-bold ph-x"></i>
+                    </button>
+                </div>
+                <p class="text-sm text-gray-600 mb-4 font-medium">Select destination ward:</p>
+                <div id="transfer-ward-list" class="flex flex-col gap-2.5 max-h-[55vh] overflow-y-auto pr-1">
+                    <!-- Ward buttons dynamically injected here -->
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -329,7 +348,7 @@
                     animation: 150,
                     ghostClass: 'sortable-ghost',
                     dragClass: 'sortable-drag',
-                    delay: 250, // 250ms "Press and hold" threshold for touch devices
+                    delay: 1000, // Increased to 1000ms to effectively disable touch dragging in favor of the long-press menu
                     delayOnTouchOnly: true, // Desktop remains instant
                     forceFallback: true, // CRITICAL: Bypasses native HTML drag to allow 2-finger scroll
                     fallbackClass: 'sortable-drag',
@@ -358,6 +377,66 @@
             bedDiv.className = `bed-box state-${bed.state} rounded-xl p-2 cursor-grab relative shadow-sm block`;
             bedDiv.dataset.bedId = bed.id;
             
+            // --- Custom Touch & Mouse Long Press Logic for Modal ---
+            let isLongPressing = false;
+            let pressTimer;
+            let startX, startY;
+
+            const startPress = (e) => {
+                if (e.target.closest('button')) return; // Ignore if interacting with icons/buttons
+                if (e.type === 'mousedown' && e.button !== 0) return; // Left click only
+                
+                if (e.type === 'touchstart') {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                } else {
+                    startX = e.clientX;
+                    startY = e.clientY;
+                }
+
+                isLongPressing = false;
+                pressTimer = setTimeout(() => {
+                    // Prevent modal if user has started dragging
+                    if (bedDiv.classList.contains('sortable-ghost') || bedDiv.classList.contains('sortable-drag')) return;
+                    
+                    isLongPressing = true;
+                    if (navigator.vibrate) navigator.vibrate(50); // Haptic feedback
+                    openTransferModal(bed.id, ward.id);
+                }, 400); // 400ms long press to trigger modal
+            };
+            
+            const cancelPress = () => clearTimeout(pressTimer);
+            
+            const checkMovement = (e) => {
+                if (!pressTimer) return;
+                let currentX, currentY;
+                if (e.type === 'touchmove') {
+                    currentX = e.touches[0].clientX;
+                    currentY = e.touches[0].clientY;
+                } else if (e.type === 'mousemove') {
+                    currentX = e.clientX;
+                    currentY = e.clientY;
+                }
+
+                if (currentX !== undefined && currentY !== undefined) {
+                    if (Math.abs(currentX - startX) > 5 || Math.abs(currentY - startY) > 5) {
+                        cancelPress(); // Cancel long press if moved > 5px (they are dragging)
+                    }
+                }
+            };
+
+            // Touch events
+            bedDiv.addEventListener('touchstart', startPress, {passive: true});
+            bedDiv.addEventListener('touchend', cancelPress);
+            bedDiv.addEventListener('touchmove', checkMovement, {passive: true});
+            bedDiv.addEventListener('touchcancel', cancelPress);
+            
+            // Mouse events (Desktop)
+            bedDiv.addEventListener('mousedown', startPress);
+            bedDiv.addEventListener('mouseup', cancelPress);
+            bedDiv.addEventListener('mousemove', checkMovement);
+            bedDiv.addEventListener('mouseleave', cancelPress);
+
             // Text Input (Editable ONLY on click to allow dragging the rest of the time)
             const textDiv = document.createElement('div');
             textDiv.className = "text-input text-base md:text-lg font-bold leading-tight cursor-text";
@@ -366,6 +445,12 @@
             
             // Unlock and focus when clicked
             textDiv.onclick = (e) => {
+                if (isLongPressing) {
+                    e.preventDefault();
+                    isLongPressing = false;
+                    return; // Prevent text box from opening if we just launched the transfer modal
+                }
+                
                 if (textDiv.contentEditable !== "true") {
                     textDiv.contentEditable = "true";
                     textDiv.focus();
@@ -453,6 +538,84 @@
         }
 
         // --- Data Manipulation Functions ---
+
+        // --- Transfer Modal Functions ---
+        let transferBedId = null;
+        let transferFromWardId = null;
+
+        function openTransferModal(bedId, currentWardId) {
+            transferBedId = bedId;
+            transferFromWardId = currentWardId;
+
+            const modal = document.getElementById('transfer-modal');
+            const content = document.getElementById('transfer-modal-content');
+            const list = document.getElementById('transfer-ward-list');
+            
+            list.innerHTML = '';
+
+            appData.forEach(targetWard => {
+                if (targetWard.id === currentWardId) return; // Skip current ward
+
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-blue-50 hover:border-blue-300 transition-colors flex items-center justify-between group`;
+                btn.innerHTML = `
+                    <span class="font-bold text-gray-700 group-hover:text-blue-700 text-lg">${targetWard.name}</span>
+                    <i class="ph-bold ph-caret-right text-gray-400 group-hover:text-blue-500"></i>
+                `;
+                btn.onclick = () => executeTransfer(targetWard.id);
+                list.appendChild(btn);
+            });
+
+            // Show and animate modal
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            });
+        }
+
+        function closeTransferModal() {
+            const modal = document.getElementById('transfer-modal');
+            const content = document.getElementById('transfer-modal-content');
+            
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                transferBedId = null;
+                transferFromWardId = null;
+            }, 200);
+        }
+
+        function executeTransfer(targetWardId) {
+            if (!transferBedId || !transferFromWardId) return;
+
+            const fromWard = appData.find(w => w.id === transferFromWardId);
+            const toWard = appData.find(w => w.id === targetWardId);
+
+            if (fromWard && toWard) {
+                const bedIndex = fromWard.beds.findIndex(b => b.id === transferBedId);
+                if (bedIndex > -1) {
+                    const [movedBed] = fromWard.beds.splice(bedIndex, 1);
+                    
+                    // Assign gender if moving to a gender-required ward
+                    if (toWard.hasGender && !movedBed.gender) {
+                        movedBed.gender = 'male';
+                    }
+                    
+                    toWard.beds.push(movedBed);
+                    
+                    renderDashboard();
+                    autoSave();
+                }
+            }
+            closeTransferModal();
+        }
 
         function findBedInfo(bedId) {
             if (!Array.isArray(appData)) return null;
