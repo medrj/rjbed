@@ -65,18 +65,15 @@
 
         /* Textbox styling */
         .text-input {
-            min-height: 2rem;
+            min-height: 5.5rem; /* Taller box by default */
             width: 100%;
-            padding-right: 1.75rem; /* Prevent text from hiding under the color icon */
-            border: 1px dashed transparent;
-            border-radius: 4px;
-            padding-left: 6px;
-            padding-top: 2px;
-            padding-bottom: 2px;
-            opacity: 0.9;
+            border: 2px dashed transparent; 
+            border-radius: 8px;
+            /* Padding: Top(8px), Right(48px for big drop icon), Bottom(36px for gender/trash), Left(8px) */
+            padding: 8px 48px 36px 8px; 
+            opacity: 0.95;
             transition: all 0.2s ease;
-            margin-bottom: 1.25rem; /* Make room for icons at the bottom */
-            word-break: break-word; /* Wrap long patient names nicely */
+            word-break: break-word; /* Wrap long patient names naturally */
         }
         
         /* Show border if empty */
@@ -96,6 +93,15 @@
         /* Dragging visual feedback */
         .sortable-ghost { opacity: 0.4; }
         .sortable-drag { cursor: grabbing !important; }
+
+        /* Pop-in animation for instant feedback */
+        @keyframes popIn {
+            0% { transform: scale(0.85); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .bed-box {
+            animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
     </style>
 </head>
 <body class="p-3 md:p-6 lg:p-8">
@@ -111,20 +117,15 @@
                 </h1>
                 <p class="text-gray-600 mt-1">Drag and drop to move patients. Click the paint icon to change status.</p>
                 
-                <!-- Color Legend -->
-                <div class="flex flex-wrap gap-4 mt-3 mb-2">
-                    <span class="flex items-center gap-1.5 text-sm font-medium text-gray-700"><span class="w-3.5 h-3.5 rounded-full bg-red-400 border border-red-500 shadow-sm"></span> Reserved</span>
-                    <span class="flex items-center gap-1.5 text-sm font-medium text-gray-700"><span class="w-3.5 h-3.5 rounded-full bg-green-300 border border-green-500 shadow-sm"></span> Vacant</span>
-                    <span class="flex items-center gap-1.5 text-sm font-medium text-gray-700"><span class="w-3.5 h-3.5 rounded-full bg-sky-400 border border-sky-500 shadow-sm"></span> Plan D/C</span>
-                </div>
-
-                <!-- Clock -->
-                <div class="mt-2 text-sm font-medium text-gray-700 bg-white/60 backdrop-blur-md border border-white/50 inline-block px-3 py-1 rounded-md shadow-sm">
-                    <i class="ph ph-clock text-gray-500"></i> <span id="current-time">Loading time...</span>
+                <!-- Color Legend (Larger Blocks & Fonts) -->
+                <div class="flex flex-wrap gap-6 mt-4 mb-3">
+                    <span class="flex items-center gap-2.5 text-base md:text-lg font-semibold text-gray-800"><span class="w-10 h-6 rounded-md bg-red-400 border border-red-500 shadow-sm"></span> Reserved</span>
+                    <span class="flex items-center gap-2.5 text-base md:text-lg font-semibold text-gray-800"><span class="w-10 h-6 rounded-md bg-green-300 border border-green-500 shadow-sm"></span> Vacant</span>
+                    <span class="flex items-center gap-2.5 text-base md:text-lg font-semibold text-gray-800"><span class="w-10 h-6 rounded-md bg-sky-400 border border-sky-500 shadow-sm"></span> Plan D/C</span>
                 </div>
             </div>
             
-            <div id="settings-panel" class="bg-white/70 backdrop-blur-md p-3 rounded-xl shadow-md border border-white/80 flex flex-col gap-2 w-full md:w-96">
+            <div id="settings-panel" class="bg-white/70 backdrop-blur-md p-4 rounded-xl shadow-md border border-white/80 flex flex-col gap-3 w-full md:w-[22rem]">
                 <div id="url-input-container">
                     <label class="text-xs font-semibold text-gray-600 uppercase tracking-wider">Database Link (Google Apps Script URL)</label>
                     <div class="flex gap-2 mb-2">
@@ -135,16 +136,28 @@
                     </div>
                 </div>
                 
-                <!-- Live Sync Status -->
-                <div class="flex justify-between items-center" id="status-container">
-                    <div class="flex items-center gap-2">
-                        <span class="relative flex h-2.5 w-2.5">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                        </span>
-                        <div id="last-update" class="text-xs text-gray-600 font-medium text-emerald-700">Live Sync Active</div>
+                <!-- Futuristic Date & Time -->
+                <div class="flex flex-col items-end justify-center border-b border-gray-200/60 pb-3 mb-1 w-full">
+                    <div id="current-time" class="text-4xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 font-mono drop-shadow-sm" style="font-variant-numeric: tabular-nums;">
+                        --:--:--
                     </div>
-                    <div id="sync-status" class="text-xs text-gray-500 text-right h-4">Connected</div>
+                    <div id="current-date" class="text-xs font-bold text-gray-500 tracking-[0.25em] uppercase mt-1">
+                        ---
+                    </div>
+                </div>
+                
+                <!-- Live Sync Status -->
+                <div class="flex flex-col gap-1.5">
+                    <div class="flex justify-between items-center pt-0.5" id="status-container">
+                        <div class="flex items-center gap-2">
+                            <span class="relative flex h-2.5 w-2.5">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                            </span>
+                            <div id="last-update" class="text-xs text-gray-600 font-medium text-emerald-700">Live Sync Active</div>
+                        </div>
+                        <div id="sync-status" class="text-xs text-gray-500 text-right h-4">Connected</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -167,22 +180,20 @@
         // Paste your Google Apps Script URL below. 
         // If provided, the UI to input the URL will be hidden.
         const HARDCODED_API_URL = "https://script.google.com/macros/s/AKfycbx_nCLnjyOCgV6SyOMV4C_2CDyaq-LBhRVlUECDP0eL5q8JsuuuhDW2gqLKZsl06ZlC/exec"; 
-        // Example: const HARDCODED_API_URL = "https://script.google.com/macros/s/AKfycb.../exec";
-
 
         // Utility: Generate a random ID
         function generateId() {
             return Math.random().toString(36).substr(2, 9);
         }
 
-        // Initial setup for default wards (Starts with 0 beds as requested)
+        // Initial setup for default wards
         const defaultWards = [
             { id: generateId(), name: "6ก", color: "bg-rose-100 border-rose-300 text-rose-900", beds: [], isDefault: true },
             { id: generateId(), name: "6ข", color: "bg-fuchsia-100 border-fuchsia-300 text-fuchsia-900", beds: [], isDefault: true },
             { id: generateId(), name: "19B", color: "bg-blue-100 border-blue-300 text-blue-900", beds: [], isDefault: true },
             { id: generateId(), name: "20B", color: "bg-cyan-100 border-cyan-300 text-cyan-900", beds: [], isDefault: true },
-            { id: generateId(), name: "21B", color: "bg-teal-100 border-teal-300 text-teal-900", beds: [], isDefault: true },
-            { id: generateId(), name: "Observe ward", color: "bg-indigo-100 border-indigo-300 text-indigo-900", beds: [], isDefault: true },
+            { id: generateId(), name: "21B", color: "bg-teal-100 border-teal-300 text-teal-900", beds: [], isDefault: true, hasGender: true },
+            { id: generateId(), name: "Observe ward", color: "bg-indigo-100 border-indigo-300 text-indigo-900", beds: [], isDefault: true, hasGender: true },
             { id: generateId(), name: "ICU", color: "bg-red-100 border-red-300 text-red-900", beds: [], isDefault: true },
             { id: generateId(), name: "RCU", color: "bg-orange-100 border-orange-300 text-orange-900", beds: [], isDefault: true },
             { id: generateId(), name: "Semi ICU", color: "bg-amber-100 border-amber-300 text-amber-900", beds: [], isDefault: true },
@@ -193,8 +204,11 @@
         // The main state of the application
         let appData = [];
         let sortableInstances = [];
-        let isInteracting = false; // Prevents auto-refresh while user is typing/dragging
+        let isInteracting = false; 
         let isSaving = false;
+        let hasPendingChanges = false; 
+        let syncBlockUntil = 0; 
+        let saveTimeout; 
 
         function getApiUrl() {
             return HARDCODED_API_URL.trim() !== "" ? HARDCODED_API_URL.trim() : document.getElementById('api-url').value;
@@ -224,7 +238,7 @@
             sortableInstances.forEach(inst => inst.destroy());
             sortableInstances = [];
 
-            // Safe-guard: If appData is completely empty, show a recovery button
+            // Safe-guard
             if (!Array.isArray(appData) || appData.length === 0) {
                 container.innerHTML = `
                     <div class="bg-white/60 backdrop-blur-md rounded-2xl p-8 text-center border border-white/80 shadow-sm mt-4 col-span-1 lg:col-span-2">
@@ -240,12 +254,12 @@
             }
 
             appData.forEach(ward => {
-                // Ward Container - Glassmorphism
+                // Ward Container
                 const wardDiv = document.createElement('div');
                 wardDiv.className = `bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-white/80 overflow-hidden`;
                 wardDiv.dataset.wardId = ward.id;
                 
-                // Ward Header - Glassmorphism
+                // Ward Header
                 const headerDiv = document.createElement('div');
                 headerDiv.className = `${ward.color} bg-opacity-90 backdrop-blur-md px-4 py-3 flex justify-between items-center border-b border-white/50 gap-2`;
                 
@@ -261,7 +275,7 @@
                 };
                 headerDiv.appendChild(titleDiv);
 
-                // Delete Button (only if not default)
+                // Delete Button
                 if (!ward.isDefault) {
                     const delBtn = document.createElement('button');
                     delBtn.className = "text-current opacity-60 hover:opacity-100 transition-opacity p-1";
@@ -279,11 +293,10 @@
 
                 // Beds Grid Container
                 const gridContainer = document.createElement('div');
-                // Use CSS Grid: Adjusted column counts to force horizontal rectangular shapes
-                gridContainer.className = "p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 min-h-[100px] ward-bed-list";
+                // Removed 1 column size across breakpoints to make boxes naturally wider horizontal rectangles
+                gridContainer.className = "p-4 grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 min-h-[100px] ward-bed-list";
                 gridContainer.dataset.wardId = ward.id;
 
-                // Render individual beds safely
                 if (Array.isArray(ward.beds)) {
                     ward.beds.forEach(bed => {
                         gridContainer.appendChild(createBedElement(ward, bed)); 
@@ -292,7 +305,7 @@
 
                 wardDiv.appendChild(gridContainer);
                 
-                // Add Bed Button (Bottom of ward)
+                // Add Bed Button
                 const addBedDiv = document.createElement('div');
                 addBedDiv.className = "bg-white/40 backdrop-blur-sm px-4 py-3 border-t border-white/60 flex justify-end";
                 addBedDiv.innerHTML = `
@@ -305,17 +318,17 @@
                 container.appendChild(wardDiv);
             });
 
-            // Initialize SortableJS on all ward bed lists
+            // Initialize SortableJS
             document.querySelectorAll('.ward-bed-list').forEach(listElement => {
                 const sortable = new Sortable(listElement, {
-                    group: 'shared-beds', // Allows dragging between different wards
+                    group: 'shared-beds', 
                     animation: 150,
                     ghostClass: 'sortable-ghost',
                     dragClass: 'sortable-drag',
-                    delay: 100, // Small delay prevents accidental drags when trying to scroll on mobile
-                    delayOnTouchOnly: true, // Only apply delay on touch screens
+                    delay: 100, 
+                    delayOnTouchOnly: true,
                     onStart: function () {
-                        isInteracting = true; // Block background refresh during drag
+                        isInteracting = true; 
                     },
                     onEnd: function (evt) {
                         isInteracting = false;
@@ -326,67 +339,82 @@
             });
         }
 
-        // Create a single Bed HTML Element
+        // Create a single Bed HTML Element 
         function createBedElement(ward, bed) {
             const bedDiv = document.createElement('div');
-            bedDiv.className = `bed-box state-${bed.state} rounded-lg p-3 cursor-grab flex flex-col justify-between relative min-h-[85px]`;
+            // Using a block layout with relative positioning so text can span freely without flexbox compression
+            bedDiv.className = `bed-box state-${bed.state} rounded-xl p-2 cursor-grab relative shadow-sm block`;
             bedDiv.dataset.bedId = bed.id;
             
-            // Text Input (Editable)
+            // Text Input (Editable ONLY on click to allow dragging the rest of the time)
             const textDiv = document.createElement('div');
-            textDiv.className = "text-input text-sm md:text-base font-semibold leading-tight";
-            textDiv.contentEditable = "true";
+            textDiv.className = "text-input text-base md:text-lg font-bold leading-tight cursor-text";
+            textDiv.contentEditable = "false"; // Start locked so SortableJS allows drag
             textDiv.innerText = bed.text || "";
-            textDiv.onfocus = () => isInteracting = true; // Block background refresh during typing
+            
+            // Unlock and focus when clicked
+            textDiv.onclick = (e) => {
+                if (textDiv.contentEditable !== "true") {
+                    textDiv.contentEditable = "true";
+                    textDiv.focus();
+                    
+                    // Move cursor to the end of the text for seamless typing
+                    if (textDiv.innerText.length > 0) {
+                        const range = document.createRange();
+                        const sel = window.getSelection();
+                        range.selectNodeContents(textDiv);
+                        range.collapse(false);
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                    }
+                }
+            };
+
+            textDiv.onfocus = () => isInteracting = true;
             textDiv.onblur = (e) => {
+                textDiv.contentEditable = "false"; // Lock it back so it's draggable again
                 isInteracting = false;
                 updateBedText(bed.id, e.target.innerText);
             };
-            
-            // Ensure clicking text doesn't trigger drag
-            textDiv.onmousedown = (e) => e.stopPropagation(); 
-            textDiv.ontouchstart = (e) => e.stopPropagation();
 
-            // Color Change Button (Big icon)
+            // Color Change Button (Absolute top right, Huge size)
             const colorBtn = document.createElement('button');
-            colorBtn.className = "color-btn absolute top-2 right-2 text-xl hover:scale-110 transition-transform p-1 z-10";
+            colorBtn.className = "color-btn absolute top-3 right-3 text-4xl hover:scale-110 transition-transform z-10 drop-shadow-md";
             colorBtn.innerHTML = '<i class="ph-fill ph-drop"></i>';
             colorBtn.title = "Change Status";
             colorBtn.onclick = (e) => {
                 e.preventDefault();
-                e.stopPropagation(); // Prevent drag
+                e.stopPropagation(); 
                 toggleBedState(bed.id);
             };
 
-            // Gender toggle icon (Only for Observe ward and 21B)
-            if (ward.name && (ward.name.includes("Observe") || ward.name.includes("21B"))) {
+            // Gender toggle icon (Absolute bottom left, Large size)
+            if (ward.hasGender) {
                 const genderBtn = document.createElement('button');
-                genderBtn.className = "absolute bottom-1 left-2 p-1 hover:scale-110 transition-transform cursor-pointer z-10";
+                genderBtn.className = "gender-btn absolute bottom-3 left-4 hover:scale-110 transition-transform cursor-pointer z-10";
                 
-                // Fallback to male if gender is undefined
-                const currentGender = bed.gender || 'male'; 
+                if (!bed.gender) bed.gender = 'male'; 
                 
-                // Set to consistent blue and pink with a drop shadow for visibility
-                if (currentGender === 'male') {
-                    genderBtn.innerHTML = '<i class="ph-bold ph-gender-male text-blue-600 drop-shadow-md text-xl"></i>';
+                if (bed.gender === 'male') {
+                    genderBtn.innerHTML = '<i class="ph-bold ph-gender-male text-blue-600 drop-shadow-md text-3xl"></i>';
                     genderBtn.title = "Male (Click to switch)";
                 } else {
-                    genderBtn.innerHTML = '<i class="ph-bold ph-gender-female text-pink-600 drop-shadow-md text-xl"></i>';
+                    genderBtn.innerHTML = '<i class="ph-bold ph-gender-female text-pink-600 drop-shadow-md text-3xl"></i>';
                     genderBtn.title = "Female (Click to switch)";
                 }
 
                 genderBtn.onclick = (e) => {
                     e.preventDefault();
-                    e.stopPropagation(); // Prevent drag
+                    e.stopPropagation(); 
                     toggleBedGender(bed.id);
                 };
                 
                 bedDiv.appendChild(genderBtn);
             }
 
-            // Delete Bed Button
+            // Delete Bed Button (Absolute bottom right)
             const deleteBtn = document.createElement('button');
-            deleteBtn.className = "absolute bottom-1 right-2 text-xs opacity-50 hover:opacity-100 transition-opacity p-1 z-10";
+            deleteBtn.className = "absolute bottom-3 right-3 text-xl opacity-50 hover:opacity-100 transition-opacity z-10 p-1";
             deleteBtn.innerHTML = '<i class="ph ph-trash"></i>'; 
             deleteBtn.onclick = (e) => {
                 e.preventDefault();
@@ -394,6 +422,7 @@
                 deleteBed(bed.id);
             };
 
+            // Append elements directly
             bedDiv.appendChild(textDiv);
             bedDiv.appendChild(colorBtn);
             bedDiv.appendChild(deleteBtn);
@@ -403,7 +432,6 @@
 
         // --- Data Manipulation Functions ---
 
-        // Helper to find a bed regardless of which ward it currently belongs to
         function findBedInfo(bedId) {
             if (!Array.isArray(appData)) return null;
             for (let i = 0; i < appData.length; i++) {
@@ -420,16 +448,34 @@
             const info = findBedInfo(bedId);
             if (!info) return;
             info.bed.state = cycleState(info.bed.state);
-            renderDashboard();
+            
+            // Update DOM directly smoothly
+            const bedElement = document.querySelector(`[data-bed-id="${bedId}"]`);
+            if (bedElement) {
+                bedElement.className = `bed-box state-${info.bed.state} rounded-xl p-2 cursor-grab relative shadow-sm block`;
+            }
+            
             autoSave();
         }
 
         function toggleBedGender(bedId) {
             const info = findBedInfo(bedId);
             if (!info) return;
-            // Switch between male and female
+            
             info.bed.gender = (info.bed.gender === 'female') ? 'male' : 'female';
-            renderDashboard();
+            
+            // Update DOM directly smoothly
+            const genderBtn = document.querySelector(`[data-bed-id="${bedId}"] .gender-btn`);
+            if (genderBtn) {
+                if (info.bed.gender === 'male') {
+                    genderBtn.innerHTML = '<i class="ph-bold ph-gender-male text-blue-600 drop-shadow-md text-3xl"></i>';
+                    genderBtn.title = "Male (Click to switch)";
+                } else {
+                    genderBtn.innerHTML = '<i class="ph-bold ph-gender-female text-pink-600 drop-shadow-md text-3xl"></i>';
+                    genderBtn.title = "Female (Click to switch)";
+                }
+            }
+            
             autoSave();
         }
 
@@ -455,16 +501,29 @@
             if (!ward) return;
             if (!Array.isArray(ward.beds)) ward.beds = [];
 
-            // New bed starts as vacant (pastel green)
             let newBed = { id: generateId(), text: "", state: "vacant" };
             
-            // Assign default gender if added to wards that require it
-            if (ward.name && (ward.name.includes("Observe") || ward.name.includes("21B"))) {
+            if (ward.hasGender) {
                 newBed.gender = "male"; 
             }
 
             ward.beds.push(newBed);
-            renderDashboard();
+            
+            // Append smoothly to DOM without interrupting UI
+            const gridContainer = document.querySelector(`.ward-bed-list[data-ward-id="${wardId}"]`);
+            if (gridContainer) {
+                const newBedElement = createBedElement(ward, newBed);
+                gridContainer.appendChild(newBedElement);
+                
+                setTimeout(() => {
+                    const textInput = newBedElement.querySelector('.text-input');
+                    if (textInput) {
+                        textInput.contentEditable = "true"; // Must unlock first
+                        textInput.focus();
+                    }
+                }, 10);
+            }
+            
             autoSave();
         }
 
@@ -472,7 +531,13 @@
             const info = findBedInfo(bedId);
             if (!info) return;
             info.ward.beds.splice(info.bedIndex, 1);
-            renderDashboard();
+            
+            // Remove from DOM smoothly
+            const bedElement = document.querySelector(`[data-bed-id="${bedId}"]`);
+            if (bedElement) {
+                bedElement.remove();
+            }
+            
             autoSave();
         }
 
@@ -497,7 +562,6 @@
             });
             renderDashboard();
             autoSave();
-            // Scroll to bottom
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
 
@@ -515,20 +579,27 @@
             }
         }
 
-        // Clock & Date Functionality (Bangkok Time)
+        // Clock & Date Functionality
         function updateClock() {
             const now = new Date();
-            const timeString = now.toLocaleString('en-GB', { 
+            const dateString = now.toLocaleDateString('en-GB', { 
                 timeZone: 'Asia/Bangkok',
-                day: '2-digit', month: '2-digit', year: 'numeric',
+                day: '2-digit', month: 'short', year: 'numeric'
+            });
+            const timeString = now.toLocaleTimeString('en-GB', { 
+                timeZone: 'Asia/Bangkok',
                 hour: '2-digit', minute: '2-digit', second: '2-digit',
                 hour12: false
             });
-            document.getElementById('current-time').innerText = timeString;
+            
+            const dateEl = document.getElementById('current-date');
+            const timeEl = document.getElementById('current-time');
+            
+            if(dateEl) dateEl.innerText = dateString;
+            if(timeEl) timeEl.innerText = timeString;
         }
-        setInterval(updateClock, 1000); // Tick every second
+        setInterval(updateClock, 1000); 
 
-        // Updates the Last Sync string
         function setLastUpdateTime() {
             const now = new Date();
             const timeString = now.toLocaleString('en-GB', { 
@@ -536,10 +607,10 @@
                 hour: '2-digit', minute: '2-digit', second: '2-digit',
                 hour12: false
             });
-            document.getElementById('last-update').innerText = 'Last Update: ' + timeString;
+            const updateEl = document.getElementById('last-update');
+            if (updateEl) updateEl.innerText = 'Last Update: ' + timeString;
         }
 
-        // Handle SortableJS Drag End Event
         function handleDragEnd(evt) {
             const fromWardId = evt.from.dataset.wardId;
             const toWardId = evt.to.dataset.wardId;
@@ -557,37 +628,41 @@
             // Insert bed into new location
             toWard.beds.splice(newIndex, 0, movedBed);
 
+            // If dragged to a new ward, re-render to update ward-specific UI
+            if (fromWardId !== toWardId) {
+                renderDashboard();
+            }
+
             autoSave();
         }
 
-        // --- Cloud Sync / Saving Functions ---
-        let saveTimeout;
-
-        // Helper to safely format data and handle corrupted states
+        // Helper to safely format data
         function applyDefaultFlags(data) {
             if (!Array.isArray(data)) return [];
 
             const originalNames = ["6ก", "6ข", "19B", "20B", "21B", "Observe ward", "Observe ward (male)", "Observe ward (female)", "ICU", "RCU", "Semi ICU", "PUI", "Cohort"];
             
-            // Filter out corrupted elements
             let validData = data.filter(ward => ward && typeof ward === 'object' && ward.id);
 
             validData.forEach(ward => {
                 if (ward.isDefault === undefined && ward.name && originalNames.includes(ward.name)) {
                     ward.isDefault = true;
                 }
+                
+                const wName = (ward.name || "").toLowerCase();
+                if (wName.includes("observe") || wName.includes("21b")) {
+                    ward.hasGender = true;
+                }
 
                 if (!Array.isArray(ward.beds)) ward.beds = [];
 
-                // Migrate legacy data safely to the new properties
                 ward.beds.forEach(bed => {
-                    // Update legacy state names to new semantics
                     if (bed.state === 'occupied') bed.state = 'reserved';
                     if (bed.state === 'transfer') bed.state = 'discharge';
 
                     if (bed.text && (bed.text.trim().toLowerCase() === 'male' || bed.text.trim().toLowerCase() === 'female')) {
                         bed.gender = bed.text.trim().toLowerCase();
-                        bed.text = ""; // Clear text so it's ready for patient info
+                        bed.text = ""; 
                     }
                 });
             });
@@ -595,30 +670,32 @@
         }
 
         function autoSave() {
+            hasPendingChanges = true; 
             const urlInput = getApiUrl();
+            
             localStorage.setItem('er_dashboard_data', JSON.stringify(appData));
             
             if (urlInput === '') {
                 document.getElementById('sync-status').innerText = "Saved locally";
+                hasPendingChanges = false;
                 return;
             }
 
-            // Debounce save to prevent spamming Google Sheets
             clearTimeout(saveTimeout);
             document.getElementById('sync-status').innerText = "Typing/Editing...";
             
             saveTimeout = setTimeout(() => {
                 saveToCloud(urlInput);
-            }, 1500); // Reduced delay to 1.5 seconds for faster multi-user updates
+            }, 1500); 
         }
 
         async function saveToCloud(url) {
+            hasPendingChanges = false; 
             const statusDiv = document.getElementById('sync-status');
             statusDiv.innerHTML = '<span class="text-blue-600">Syncing changes...</span>';
             isSaving = true; 
             
             try {
-                // We use text/plain to bypass CORS preflight blocking in Apps Script
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -631,6 +708,8 @@
                         localStorage.setItem('er_dashboard_url', url); 
                     }
                     setLastUpdateTime();
+                    
+                    syncBlockUntil = Date.now() + 8000; 
                 } else {
                     throw new Error("Network response was not ok");
                 }
@@ -642,28 +721,28 @@
             }
         }
 
-        // Background auto-refresh function
         async function backgroundSync() {
             const urlInput = getApiUrl();
             
-            // Skip fetching if user is currently dragging a bed, typing a name, or saving
-            if (urlInput === '' || isInteracting || isSaving) return;
+            if (urlInput === '' || isInteracting || isSaving || hasPendingChanges || Date.now() < syncBlockUntil) return;
 
             try {
                 const response = await fetch(urlInput);
                 const data = await response.json();
                 
+                if (isInteracting || isSaving || hasPendingChanges || Date.now() < syncBlockUntil) {
+                    return; 
+                }
+
                 if (Array.isArray(data) && data.length > 0) {
                     const parsedData = applyDefaultFlags(data);
                     
-                    // Compare local data with cloud data
                     if (JSON.stringify(parsedData) !== JSON.stringify(appData)) {
                         appData = parsedData;
                         renderDashboard();
                         setLastUpdateTime();
                         document.getElementById('sync-status').innerHTML = '<span class="text-emerald-600"><i class="ph ph-arrows-clockwise"></i> Updated from cloud</span>';
                         
-                        // Clear the message after a few seconds
                         setTimeout(() => {
                             if (!isInteracting && !isSaving) {
                                 document.getElementById('sync-status').innerText = "Connected";
@@ -676,7 +755,6 @@
             }
         }
 
-        // Run background sync check every 3 seconds for near real-time multi-user experience
         setInterval(backgroundSync, 3000);
 
         async function syncData() {
@@ -699,11 +777,10 @@
                 
                 if (Array.isArray(data) && data.length > 0) {
                     appData = applyDefaultFlags(data);
-                    if (appData.length === 0) appData = JSON.parse(JSON.stringify(defaultWards)); // Final safety check
+                    if (appData.length === 0) appData = JSON.parse(JSON.stringify(defaultWards)); 
                     statusDiv.innerHTML = '<span class="text-emerald-600"><i class="ph ph-check-circle"></i> Sync successful</span>';
                     setLastUpdateTime();
                 } else {
-                    // If sheet is empty, save the default structure to it
                     statusDiv.innerHTML = '<span class="text-amber-600">New DB, uploading defaults...</span>';
                     appData = JSON.parse(JSON.stringify(defaultWards));
                     await saveToCloud(urlInput);
@@ -716,7 +793,6 @@
             }
         }
 
-        // Safely loads the local storage, resetting to defaults if corrupted
         function loadLocalData() {
             try {
                 const localData = localStorage.getItem('er_dashboard_data');
@@ -726,11 +802,9 @@
                     if (Array.isArray(parsedData) && parsedData.length > 0) {
                         appData = applyDefaultFlags(parsedData);
                     } else {
-                        // Empty Array detected, restore defaults
                         appData = JSON.parse(JSON.stringify(defaultWards)); 
                     }
                 } else {
-                    // No local data, load fresh template
                     appData = JSON.parse(JSON.stringify(defaultWards)); 
                 }
             } catch (error) {
@@ -740,16 +814,13 @@
             renderDashboard();
         }
 
-        // Initialization on page load
         window.onload = () => {
             updateClock();
             
-            // If the developer hardcoded the URL, hide the input section.
             if (HARDCODED_API_URL.trim() !== "") {
                 document.getElementById('url-input-container').style.display = 'none';
-                syncData(); // Automatically sync in the background
+                syncData(); 
             } else {
-                // Otherwise check if a URL was previously pasted and saved
                 const savedUrl = localStorage.getItem('er_dashboard_url');
                 if (savedUrl) {
                     document.getElementById('api-url').value = savedUrl;
