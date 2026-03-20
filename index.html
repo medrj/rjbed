@@ -29,7 +29,7 @@
             height: 5.5rem; /* FIXED HEIGHT FOR SYMMETRY */
             display: flex;
             flex-direction: column;
-            position: relative; /* For absolute positioning of buttons */
+            position: relative; 
             overflow: hidden;
         }
         .bed-box:hover { 
@@ -62,13 +62,13 @@
         .state-discharge .text-input { color: #ffffff; text-shadow: 0 1px 1px rgba(0,0,0,0.1); }
         .state-discharge .color-btn { color: #e0f2fe; }
 
-        /* Enhanced Text Input Area: Now covers the whole box */
+        /* Dynamic Text Input: Expanded to full box with padding for multiple icons */
         .text-input {
             width: 100%;
-            height: 100%; /* EXPANED TO FULL BOX HEIGHT */
+            height: 100%;
             border: 1px dashed transparent; 
             border-radius: 8px;
-            padding: 4px 44px 28px 6px; /* Optimized padding to avoid buttons */
+            padding: 4px 80px 28px 6px; /* PROTECT TEXT FROM 3 BUTTONS (Right side) */
             opacity: 0.95;
             transition: all 0.2s ease;
             font-size: 0.85rem; 
@@ -385,7 +385,7 @@
 
         function createBedElement(ward, bed) {
             const bedDiv = document.createElement('div');
-            bedDiv.className = `bed-box state-${bed.state} rounded-2xl p-0 cursor-grab relative shadow-sm block`; // Padding 0 to let input fill
+            bedDiv.className = `bed-box state-${bed.state} rounded-2xl p-0 cursor-grab relative shadow-sm block`;
             bedDiv.dataset.bedId = bed.id;
             
             let isLongPressing = false, pressTimer, startX, startY;
@@ -443,11 +443,20 @@
             const preventDrag = (e) => { if (textDiv.contentEditable === "true") e.stopPropagation(); };
             textDiv.onmousedown = preventDrag; textDiv.ontouchstart = preventDrag;
 
+            // COLOR BUTTON (Top Right)
             const colorBtn = document.createElement('button');
             colorBtn.className = "color-btn absolute top-1 right-1 text-2xl hover:scale-125 transition-transform z-10 drop-shadow-md";
             colorBtn.innerHTML = '<i class="ph-fill ph-drop"></i>';
             colorBtn.onclick = (e) => { 
                 e.preventDefault(); e.stopPropagation(); updateWardTimestamp(ward.id); toggleBedState(bed.id); 
+            };
+
+            // TRANSFER BUTTON (Bottom Left of Trash - so basically next to it on the right)
+            const transBtn = document.createElement('button');
+            transBtn.className = "absolute bottom-1 right-8 text-base opacity-20 hover:opacity-100 z-10 p-0.5";
+            transBtn.innerHTML = '<i class="ph ph-arrows-left-right"></i>';
+            transBtn.onclick = (e) => { 
+                e.preventDefault(); e.stopPropagation(); openTransferModal(bed.id, ward.id); 
             };
 
             if (ward.hasGender) {
@@ -461,6 +470,7 @@
                 bedDiv.appendChild(gBtn);
             }
 
+            // DELETE BUTTON (Bottom Right)
             const delBtn = document.createElement('button');
             delBtn.className = "absolute bottom-1 right-1 text-base opacity-20 hover:opacity-100 z-10 p-0.5";
             delBtn.innerHTML = '<i class="ph ph-trash"></i>'; 
@@ -468,7 +478,7 @@
                 e.preventDefault(); e.stopPropagation(); updateWardTimestamp(ward.id); deleteBed(bed.id); 
             };
 
-            bedDiv.appendChild(textDiv); bedDiv.appendChild(colorBtn); bedDiv.appendChild(delBtn);
+            bedDiv.appendChild(textDiv); bedDiv.appendChild(colorBtn); bedDiv.appendChild(transBtn); bedDiv.appendChild(delBtn);
             return bedDiv;
         }
 
@@ -506,7 +516,7 @@
         function showVacantBedsForTransfer(targetId) {
             tTargetId = targetId; const targetWard = appData.find(w => w.id === targetId);
             const list = document.getElementById('transfer-ward-list'); list.innerHTML = '';
-            document.getElementById('transfer-modal-title').innerHTML = `<div class="flex items-center gap-2"><button onclick="renderWardListForTransfer()" class="hover:bg-gray-100 p-2 rounded-full"><i class="ph-bold ph-arrow-left text-gray-400"></i></button> Select Bed</div>`;
+            document.getElementById('transfer-modal-title').innerHTML = `<div class="flex items-center gap-2 text-xl"><button onclick="renderWardListForTransfer()" class="hover:bg-gray-100 p-2 rounded-full"><i class="ph-bold ph-arrow-left text-gray-400"></i></button> Select Bed</div>`;
             
             let count = 1;
             targetWard.beds.forEach((bed) => {
@@ -542,7 +552,7 @@
             setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); tBedId = null; tFromId = null; tTargetId = null; }, 300);
         }
 
-        // --- Operations ---
+        // --- Core Operations ---
         function toggleBedState(bedId) {
             const info = findBedInfo(bedId); if (!info) return;
             info.bed.state = cycleState(info.bed.state);
@@ -600,7 +610,7 @@
             }
         }
 
-        // --- Sync ---
+        // --- Persistence ---
         function updateClock() {
             const now = new Date();
             const dateStr = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Bangkok', day: '2-digit', month: 'short', year: 'numeric' });
