@@ -18,6 +18,7 @@
             min-height: 100vh;
         }
         
+        /* Glassmorphism effects for cards */
         .bed-box { 
             transition: all 0.3s ease; 
             backdrop-filter: blur(12px);
@@ -29,6 +30,7 @@
             transform: translateY(-2px); 
         }
         
+        /* Medical State Colors */
         .state-reserved { 
             background-color: rgba(248, 113, 113, 0.85);
             color: #ffffff; 
@@ -53,6 +55,7 @@
         .state-discharge .text-input { color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .state-discharge .color-btn { color: #e0f2fe; }
 
+        /* Dynamic Text Input */
         .text-input {
             min-height: 5.5rem;
             width: 100%;
@@ -77,6 +80,7 @@
             background-color: rgba(255, 255, 255, 0.25);
         }
         
+        /* Drag and Drop Visuals */
         .sortable-ghost { opacity: 0.3 !important; }
         .sortable-drag { 
             cursor: grabbing !important; 
@@ -111,7 +115,7 @@
                 </div>
             </div>
 
-            <!-- Date/Time & Cloud Status Information -->
+            <!-- Integrated Date/Time & Cloud Status Information -->
             <div class="bg-white/40 backdrop-blur-md p-4 rounded-2xl border border-white/60 shadow-inner flex flex-col items-center md:items-end min-w-[260px]">
                 <div id="current-time" class="text-4xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-blue-700 via-sky-600 to-cyan-500 font-mono" style="font-variant-numeric: tabular-nums;">
                     --:--:--
@@ -209,7 +213,6 @@
             return 'reserved';
         }
 
-        // Standardization of function name to avoid ReferenceError
         function updateWardTimestamp(wardId) {
             const ward = appData.find(w => w.id === wardId);
             if (ward) {
@@ -227,7 +230,6 @@
 
             appData.forEach(ward => {
                 const wName = (ward.name || "").toLowerCase();
-                // Exclude Observe ward from summary
                 if (wName.includes("observe")) return;
 
                 let vacant = 0, reserved = 0, discharge = 0;
@@ -246,8 +248,7 @@
                 let statusChips = [];
                 let plainParts = [displayName];
 
-                // Summary Board Logic: 
-                // If Vacant is 0 (or no beds at all), ALWAYS show "เต็ม" (Thai) in Red
+                // Summary Board logic: Vacant 0 (or no beds at all) -> "เต็ม" (Thai)
                 if (vacant === 0) {
                     statusChips.push(`<span class="bg-red-500 text-white font-black px-2.5 py-0.5 rounded border border-red-600 shadow-sm uppercase tracking-tighter min-w-[50px] text-center">เต็ม</span>`);
                     plainParts.push(`เต็ม`);
@@ -256,9 +257,8 @@
                     plainParts.push(`ว่าง ${vacant}`);
                 }
 
-                // Reserved & Plan D/C: Only show if > 0
                 if (reserved > 0) {
-                    statusChips.push(`<span class="bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded border border-rose-200 min-w-[70px] text-center">จองมาแล้ว ${reserved}</span>`);
+                    statusChips.push(`<span class="bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded border border-rose-200 whitespace-nowrap min-w-[70px] text-center">จองมาแล้ว ${reserved}</span>`);
                     plainParts.push(`จองมาแล้ว ${reserved}`);
                 }
                 if (discharge > 0) {
@@ -266,7 +266,6 @@
                     plainParts.push(`Plan D/C ${discharge}`);
                 }
 
-                // Append row
                 htmlContent += `
                     <div class="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0 overflow-hidden">
                         <span class="font-black w-14 text-gray-800 flex-shrink-0 italic tracking-tighter truncate uppercase">${displayName}</span>
@@ -299,7 +298,7 @@
             sortableInstances = [];
 
             if (!appData || appData.length === 0) {
-                container.innerHTML = `<div class="col-span-full p-12 text-center font-bold text-gray-400 uppercase tracking-widest italic">Awaiting Data...</div>`;
+                container.innerHTML = `<div class="col-span-full p-12 text-center font-bold text-gray-400 uppercase tracking-widest italic">Awaiting Hospital Data...</div>`;
                 return;
             }
 
@@ -349,7 +348,7 @@
                 if (ward.beds && ward.beds.length > 0) {
                     ward.beds.forEach(bed => { gridContainer.appendChild(createBedElement(ward, bed)); });
                 } else {
-                    // Dashboard cards logic: Vacant 0/No beds -> "FULL" (English) as requested
+                    // Dashboard cards logic: "Full" (English) placeholder
                     gridContainer.innerHTML = `<div class="col-span-full h-[110px] border-2 border-dashed border-red-200 bg-red-50/50 rounded-2xl flex items-center justify-center pointer-events-none text-red-400 font-black text-2xl tracking-[0.3em] uppercase">Full</div>`;
                 }
 
@@ -494,10 +493,12 @@
                 const isFull = vacantBeds.length === 0;
                 const btn = document.createElement('button');
                 btn.className = `w-full text-left px-5 py-4 rounded-2xl border transition-all flex items-center justify-between group ${isFull ? 'border-red-100 bg-red-50/50 cursor-not-allowed grayscale' : 'border-gray-100 bg-gray-50 hover:bg-blue-50 hover:border-blue-200 shadow-sm'}`;
+                
+                // UPDATED: Use "Vacant" instead of "Open"
                 btn.innerHTML = `
                     <div class="flex items-center gap-3">
                         <span class="font-black text-gray-700 italic text-xl uppercase">${targetWard.name}</span>
-                        ${isFull ? `<span class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">Full</span>` : `<span class="bg-emerald-500 text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">${vacantBeds.length} Open</span>`}
+                        ${isFull ? `<span class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">Full</span>` : `<span class="bg-emerald-500 text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">${vacantBeds.length} Vacant</span>`}
                     </div>
                     <i class="ph-bold ph-caret-right text-gray-300"></i>`;
                 if (!isFull) btn.onclick = () => showVacantBedsForTransfer(targetWard.id);
@@ -510,14 +511,19 @@
             const list = document.getElementById('transfer-ward-list'); list.innerHTML = '';
             document.getElementById('transfer-modal-title').innerHTML = `<div class="flex items-center gap-2"><button onclick="renderWardListForTransfer()" class="hover:bg-gray-100 p-1 rounded-full"><i class="ph-bold ph-arrow-left text-gray-400"></i></button> Select Bed</div>`;
             document.getElementById('transfer-modal-subtitle').innerText = `Target: ${targetWard.name}`;
+            
             let count = 1;
             targetWard.beds.forEach((bed) => {
                 if (bed.state === 'vacant') {
+                    // UPDATED: Show bed text if present, otherwise "Vacant #"
+                    const label = bed.text && bed.text.trim() !== "" ? bed.text : `Vacant ${count}`;
+                    
                     const btn = document.createElement('button');
                     btn.className = `w-full text-left px-5 py-4 rounded-2xl border border-emerald-100 bg-emerald-50/50 hover:bg-emerald-100 transition-all flex items-center justify-between mb-2 shadow-sm group`;
-                    btn.innerHTML = `<div class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-emerald-400 border-2 border-white shadow-sm inline-block"></span><span class="font-black text-emerald-800 text-lg italic">Spot #${count}</span></div><i class="ph-bold ph-check text-emerald-600 opacity-0 group-hover:opacity-100 text-2xl"></i>`;
+                    btn.innerHTML = `<div class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-emerald-400 border-2 border-white shadow-sm inline-block"></span><span class="font-black text-emerald-800 text-lg italic">${label}</span></div><i class="ph-bold ph-check text-emerald-600 opacity-0 group-hover:opacity-100 text-2xl"></i>`;
                     btn.onclick = () => executeTransfer(bed.id);
-                    list.appendChild(btn); count++;
+                    list.appendChild(btn); 
+                    count++;
                 }
             });
         }
