@@ -26,9 +26,10 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06); 
-            height: 5.5rem; /* FIXED HEIGHT FOR SYMMETRY AND AESTHETICS */
+            height: 5.5rem; /* FIXED HEIGHT FOR SYMMETRY */
             display: flex;
             flex-direction: column;
+            position: relative; /* For absolute positioning of buttons */
             overflow: hidden;
         }
         .bed-box:hover { 
@@ -61,27 +62,28 @@
         .state-discharge .text-input { color: #ffffff; text-shadow: 0 1px 1px rgba(0,0,0,0.1); }
         .state-discharge .color-btn { color: #e0f2fe; }
 
-        /* Dynamic Text Input: Border hidden by default, fixed size */
+        /* Enhanced Text Input Area: Now covers the whole box */
         .text-input {
-            flex-grow: 1;
             width: 100%;
+            height: 100%; /* EXPANED TO FULL BOX HEIGHT */
             border: 1px dashed transparent; 
             border-radius: 8px;
-            padding: 4px 44px 4px 6px; /* Space for buttons on the right */
+            padding: 4px 44px 28px 6px; /* Optimized padding to avoid buttons */
             opacity: 0.95;
             transition: all 0.2s ease;
-            font-size: 0.85rem; /* Smaller font to handle long texts like 20B */
+            font-size: 0.85rem; 
             font-weight: 700;
             word-break: break-word;
             line-height: 1.1;
             cursor: text;
             overflow-y: auto;
             scrollbar-width: none;
+            display: block;
         }
         
         .text-input::-webkit-scrollbar { display: none; }
         
-        /* Show border ONLY when hover or focus as requested */
+        /* Show border ONLY when hover or focus */
         .text-input:hover, .text-input:focus {
             opacity: 1;
             border: 1px dashed rgba(255, 255, 255, 0.6); 
@@ -126,7 +128,7 @@
                 </div>
             </div>
 
-            <!-- Integrated Time & Status Information -->
+            <!-- Integrated Time & Status -->
             <div class="bg-white/40 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/60 shadow-inner flex flex-col items-center md:items-end min-w-[300px]">
                 <div id="current-time" class="text-4xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-blue-700 via-sky-600 to-cyan-500 font-mono" style="font-variant-numeric: tabular-nums;">
                     --:--:--
@@ -157,7 +159,7 @@
                 <div id="summary-content" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2 h-auto pr-10"></div>
             </div>
 
-            <!-- Minimal URL Configuration -->
+            <!-- Database URL Config -->
             <div id="url-input-container" class="hidden bg-white/60 backdrop-blur-md p-3 rounded-2xl border border-white/80 shadow-sm flex items-center self-end max-w-sm">
                 <input type="text" id="api-url" placeholder="Database URL" class="flex-1 text-[11px] border border-gray-300 rounded-l-lg px-3 py-2 focus:outline-none bg-white/80">
                 <button onclick="syncData()" class="bg-blue-600 text-white px-4 py-2 rounded-r-lg text-[11px] font-bold">Sync</button>
@@ -171,7 +173,7 @@
             <i class="ph ph-plus-circle text-3xl"></i> Add New Ward
         </button>
 
-        <!-- Transfer Modal UI -->
+        <!-- Transfer Modal -->
         <div id="transfer-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-md z-[9999] hidden items-center justify-center p-4 opacity-0 transition-all duration-300">
             <div class="bg-white border border-white/60 rounded-3xl shadow-2xl w-full max-w-md p-8 transform scale-90 transition-all duration-300" id="transfer-modal-content">
                 <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
@@ -257,9 +259,8 @@
                 let statusChips = [];
                 let plainParts = [displayName];
 
-                // Summary Board Logic: Vacant 0 -> "เต็ม" (Thai)
                 if (vacant === 0) {
-                    statusChips.push(`<span class="bg-red-500 text-white font-black px-2.5 py-0.5 rounded text-sm whitespace-nowrap min-w-[50px] text-center shadow-sm uppercase tracking-tighter">เต็ม</span>`);
+                    statusChips.push(`<span class="bg-red-500 text-white font-black px-2.5 py-0.5 rounded text-sm whitespace-nowrap min-w-[50px] text-center shadow-sm">เต็ม</span>`);
                     plainParts.push(`เต็ม`);
                 } else {
                     statusChips.push(`<span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-sm whitespace-nowrap min-w-[50px] text-center border border-emerald-200">ว่าง ${vacant}</span>`);
@@ -357,7 +358,6 @@
                 if (ward.beds && ward.beds.length > 0) {
                     ward.beds.forEach(bed => { gridContainer.appendChild(createBedElement(ward, bed)); });
                 } else {
-                    // Dashboard cards logic: Vacant 0 -> "Full" (English)
                     gridContainer.innerHTML = `<div class="col-span-full h-[80px] border border-dashed border-red-200 bg-red-50/20 rounded-2xl flex items-center justify-center pointer-events-none text-red-400 font-black text-2xl tracking-widest uppercase">Full</div>`;
                 }
 
@@ -385,7 +385,7 @@
 
         function createBedElement(ward, bed) {
             const bedDiv = document.createElement('div');
-            bedDiv.className = `bed-box state-${bed.state} rounded-2xl p-2 cursor-grab relative shadow-sm block`;
+            bedDiv.className = `bed-box state-${bed.state} rounded-2xl p-0 cursor-grab relative shadow-sm block`; // Padding 0 to let input fill
             bedDiv.dataset.bedId = bed.id;
             
             let isLongPressing = false, pressTimer, startX, startY;
@@ -443,7 +443,6 @@
             const preventDrag = (e) => { if (textDiv.contentEditable === "true") e.stopPropagation(); };
             textDiv.onmousedown = preventDrag; textDiv.ontouchstart = preventDrag;
 
-            // Buttons positioned to clear the text area
             const colorBtn = document.createElement('button');
             colorBtn.className = "color-btn absolute top-1 right-1 text-2xl hover:scale-125 transition-transform z-10 drop-shadow-md";
             colorBtn.innerHTML = '<i class="ph-fill ph-drop"></i>';
@@ -543,7 +542,7 @@
             setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); tBedId = null; tFromId = null; tTargetId = null; }, 300);
         }
 
-        // --- Core Functions ---
+        // --- Operations ---
         function toggleBedState(bedId) {
             const info = findBedInfo(bedId); if (!info) return;
             info.bed.state = cycleState(info.bed.state);
@@ -601,7 +600,7 @@
             }
         }
 
-        // --- Core Sync Logic ---
+        // --- Sync ---
         function updateClock() {
             const now = new Date();
             const dateStr = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Bangkok', day: '2-digit', month: 'short', year: 'numeric' });
