@@ -70,7 +70,7 @@
             height: 100%;
             border: 1px dashed transparent; 
             border-radius: 8px;
-            padding: 4px 80px 28px 6px; /* PROTECT TEXT FROM 3 BUTTONS (Right side) */
+            padding: 4px 80px 28px 6px; /* PROTECT TEXT FROM 3 BUTTONS */
             opacity: 0.95;
             transition: all 0.2s ease;
             font-size: 0.85rem; 
@@ -123,7 +123,7 @@
                     <i class="ph-fill ph-hospital text-blue-600 text-5xl"></i>
                     RJ MED BED MANAGER
                 </h1>
-                <div class="flex flex-wrap gap-4 mt-2">
+                <div class="flex flex-wrap gap-4 mt-2 items-center">
                     <span class="flex items-center gap-2 text-[11px] font-bold text-gray-600 uppercase tracking-tighter"><span class="w-4 h-4 rounded bg-red-400 border border-red-500 shadow-sm"></span> Reserved</span>
                     <span class="flex items-center gap-2 text-[11px] font-bold text-gray-600 uppercase tracking-tighter"><span class="w-4 h-4 rounded bg-green-300 border border-green-500 shadow-sm"></span> Vacant</span>
                     <span class="flex items-center gap-2 text-[11px] font-bold text-gray-600 uppercase tracking-tighter"><span class="w-4 h-4 rounded bg-sky-400 border border-sky-500 shadow-sm"></span> Plan D/C</span>
@@ -144,6 +144,12 @@
                             <option value="'Taviraj', serif">Taviraj (ดั้งเดิม)</option>
                         </select>
                     </div>
+
+                    <!-- Update History Menu -->
+                    <button onclick="openHistoryModal()" class="flex items-center gap-1.5 border-l-2 border-gray-200/50 pl-4 hover:text-blue-600 transition-colors text-gray-600 cursor-pointer">
+                        <i class="ph-bold ph-clock-counter-clockwise text-xl"></i>
+                        <span class="text-[11px] font-bold uppercase tracking-tighter">History</span>
+                    </button>
                 </div>
             </div>
 
@@ -185,6 +191,14 @@
             </div>
         </div>
 
+        <!-- Ward Filters (Nodes) -->
+        <div class="flex flex-wrap gap-2 mb-3" id="ward-filter-container">
+            <button onclick="setFilter('All')" id="filter-All" class="filter-btn px-5 py-2 rounded-xl text-sm font-black tracking-widest uppercase transition-all bg-blue-600 text-white shadow-md border border-blue-600">All Wards</button>
+            <button onclick="setFilter('ตึกทศมินทร์')" id="filter-ตึกทศมินทร์" class="filter-btn px-5 py-2 rounded-xl text-sm font-bold tracking-widest uppercase transition-all bg-white/60 text-gray-600 hover:bg-white border border-gray-200">ตึกทศมินทร์</button>
+            <button onclick="setFilter('ตึกนอก')" id="filter-ตึกนอก" class="filter-btn px-5 py-2 rounded-xl text-sm font-bold tracking-widest uppercase transition-all bg-white/60 text-gray-600 hover:bg-white border border-gray-200">ตึกนอก</button>
+            <button onclick="setFilter('ตึก COVID')" id="filter-ตึก COVID" class="filter-btn px-5 py-2 rounded-xl text-sm font-bold tracking-widest uppercase transition-all bg-white/60 text-gray-600 hover:bg-white border border-gray-200">ตึก COVID</button>
+        </div>
+
         <!-- 2-Column Dashboard Container -->
         <div id="dashboard-container" class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start"></div>
 
@@ -204,6 +218,51 @@
                     </button>
                 </div>
                 <div id="transfer-ward-list" class="flex flex-col gap-3 max-h-[55vh] overflow-y-auto pr-2"></div>
+            </div>
+        </div>
+
+        <!-- History Rollback Modal -->
+        <div id="history-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-md z-[9999] hidden items-center justify-center p-4 opacity-0 transition-all duration-300">
+            <div class="bg-white border border-white/60 rounded-3xl shadow-2xl w-full max-w-md p-8 transform scale-90 transition-all duration-300" id="history-modal-content">
+                <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-4">
+                    <div class="flex items-center gap-4">
+                        <h3 class="text-2xl font-black text-gray-800 flex items-center gap-3 italic uppercase">
+                            <i class="ph-bold ph-clock-counter-clockwise text-blue-500 text-4xl"></i> Activity History
+                        </h3>
+                        <button onclick="openCaptchaModal()" class="text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 uppercase tracking-widest" title="Clear All History">
+                            <i class="ph-bold ph-trash"></i> Clear
+                        </button>
+                    </div>
+                    <button onclick="closeHistoryModal()" class="text-gray-400 bg-gray-100 rounded-full p-2 hover:bg-gray-200 transition-colors">
+                        <i class="ph-bold ph-x"></i>
+                    </button>
+                </div>
+                <p class="text-sm text-gray-500 mb-6 font-bold uppercase tracking-widest italic">Select a previous state to restore (Last 100 Actions)</p>
+                <div id="history-list" class="flex flex-col gap-3 max-h-[55vh] overflow-y-auto pr-2"></div>
+            </div>
+        </div>
+
+        <!-- Captcha Modal for Clearing History -->
+        <div id="captcha-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden items-center justify-center p-4 opacity-0 transition-all duration-300">
+            <div class="bg-white border border-white/60 rounded-3xl shadow-2xl w-full max-w-sm p-8 transform scale-90 transition-all duration-300" id="captcha-modal-content">
+                <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-4">
+                    <h3 class="text-xl font-black text-red-600 flex items-center gap-2 uppercase tracking-widest">
+                        <i class="ph-bold ph-warning"></i> Confirm Clear
+                    </h3>
+                    <button onclick="closeCaptchaModal()" class="text-gray-400 bg-gray-100 rounded-full p-1.5 hover:bg-gray-200 transition-colors">
+                        <i class="ph-bold ph-x"></i>
+                    </button>
+                </div>
+                <p class="text-sm text-gray-600 mb-4 font-bold">To clear all history, please enter the captcha code below:</p>
+                <div class="flex justify-center items-center bg-gray-100 rounded-xl p-3 mb-4 select-none">
+                    <span id="captcha-code-display" class="text-3xl font-mono font-black text-gray-800 tracking-[0.3em] line-through decoration-gray-400 decoration-2"></span>
+                </div>
+                <input type="text" id="captcha-input" class="w-full text-center font-mono text-xl border-2 border-gray-200 rounded-xl px-4 py-3 mb-4 focus:border-blue-500 focus:outline-none uppercase" placeholder="Enter code" autocomplete="off" maxlength="4">
+                <p id="captcha-error" class="text-red-500 text-xs font-bold text-center mb-4 hidden uppercase tracking-widest">Incorrect code. Try again.</p>
+                <div class="flex gap-3">
+                    <button onclick="closeCaptchaModal()" class="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors uppercase tracking-widest">Cancel</button>
+                    <button onclick="verifyCaptchaAndClear()" class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-colors uppercase tracking-widest shadow-md">Clear History</button>
+                </div>
             </div>
         </div>
     </div>
@@ -229,11 +288,14 @@
 
         let appData = [];
         let sortableInstances = [];
+        let historyLog = []; // Stores the state history
+        let currentCaptchaCode = ""; // Captcha variable
         let isInteracting = false; 
         let isSaving = false;
         let hasPendingChanges = false; 
         let syncBlockUntil = 0; 
         let saveTimeout; 
+        let currentFilter = 'All'; // Filter State
 
         function getApiUrl() { return HARDCODED_API_URL.trim() !== "" ? HARDCODED_API_URL.trim() : document.getElementById('api-url').value; }
 
@@ -251,6 +313,28 @@
                 const timeStr = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
                 ward.lastUpdated = `${dateStr} ${timeStr}`;
             }
+        }
+
+        // Categorizer function
+        function getWardCategory(name) {
+            if (!name) return "Other";
+            const n = name.toLowerCase();
+            if (n.includes('19b') || n.includes('20b') || n.includes('21b') || n.includes('icu') || n.includes('semi')) return "ตึกทศมินทร์";
+            if (n.includes('6ก') || n.includes('6ข') || n.includes('observe') || n.includes('er')) return "ตึกนอก";
+            if (n.includes('rcu') || n.includes('pui') || n.includes('cohort')) return "ตึก COVID";
+            return "Other";
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.id === 'filter-' + filter) {
+                    btn.className = "filter-btn px-5 py-2 rounded-xl text-sm font-black tracking-widest uppercase transition-all bg-blue-600 text-white shadow-md border border-blue-600";
+                } else {
+                    btn.className = "filter-btn px-5 py-2 rounded-xl text-sm font-bold tracking-widest uppercase transition-all bg-white/60 text-gray-600 hover:bg-white border border-gray-200";
+                }
+            });
+            renderDashboard();
         }
 
         function updateSummaryBoard() {
@@ -336,7 +420,6 @@
                 
                 let rowPlain = plainParts.join(' ') + '\n';
 
-                // Move ONLY Observe ward to the end
                 if (isObserve) {
                     observeHtmlContent += rowHtml;
                     observePlainText += rowPlain;
@@ -374,6 +457,13 @@
             }
 
             appData.forEach(ward => {
+                if (currentFilter !== 'All') {
+                    const category = getWardCategory(ward.name);
+                    if (category !== currentFilter && !(currentFilter === 'Other' && category === 'Other')) {
+                        return;
+                    }
+                }
+
                 const wardDiv = document.createElement('div');
                 wardDiv.className = `bg-white/60 backdrop-blur-lg rounded-3xl shadow-sm border border-white/80 overflow-hidden mb-1`;
                 wardDiv.dataset.wardId = ward.id;
@@ -401,11 +491,9 @@
                 leftHead.appendChild(titleDiv);
                 leftHead.appendChild(updateStamp);
 
-                // Right side of the header for buttons
                 const rightHead = document.createElement('div');
                 rightHead.className = "flex items-center gap-2";
 
-                // Refresh / Update Time Button
                 const refreshBtn = document.createElement('button');
                 refreshBtn.className = "opacity-50 hover:opacity-100 p-1 text-gray-700 transition-all duration-300 hover:rotate-180 hover:text-blue-600";
                 refreshBtn.innerHTML = '<i class="ph-bold ph-arrows-clockwise text-2xl" title="Update Time"></i>';
@@ -415,7 +503,6 @@
                 };
                 rightHead.appendChild(refreshBtn);
 
-                // Delete Ward Button (if applicable)
                 if (!ward.isDefault) {
                     const delBtn = document.createElement('button');
                     delBtn.className = "opacity-40 hover:opacity-100 p-1 text-gray-700 transition-colors hover:text-red-600";
@@ -523,7 +610,6 @@
             const preventDrag = (e) => { if (textDiv.contentEditable === "true") e.stopPropagation(); };
             textDiv.onmousedown = preventDrag; textDiv.ontouchstart = preventDrag;
 
-            // COLOR BUTTON (Top Right)
             const colorBtn = document.createElement('button');
             colorBtn.className = "color-btn absolute top-1 right-1 text-2xl hover:scale-125 transition-transform z-10 drop-shadow-md";
             colorBtn.innerHTML = '<i class="ph-fill ph-drop"></i>';
@@ -531,7 +617,6 @@
                 e.preventDefault(); e.stopPropagation(); updateWardTimestamp(ward.id); toggleBedState(bed.id); 
             };
 
-            // TRANSFER BUTTON (Bottom Left of Trash - so basically next to it on the right)
             const transBtn = document.createElement('button');
             transBtn.className = "absolute bottom-1 right-8 text-base opacity-20 hover:opacity-100 z-10 p-0.5";
             transBtn.innerHTML = '<i class="ph ph-arrows-left-right"></i>';
@@ -550,7 +635,6 @@
                 bedDiv.appendChild(gBtn);
             }
 
-            // DELETE BUTTON (Bottom Right)
             const delBtn = document.createElement('button');
             delBtn.className = "absolute bottom-1 right-1 text-base opacity-20 hover:opacity-100 z-10 p-0.5";
             delBtn.innerHTML = '<i class="ph ph-trash"></i>'; 
@@ -562,7 +646,6 @@
             return bedDiv;
         }
 
-        // --- Transfer Logic ---
         let tBedId = null, tFromId = null, tTargetId = null;
 
         function openTransferModal(bedId, currentWardId) {
@@ -620,7 +703,7 @@
                     tBed.text = sBed.text; tBed.state = sBed.state; tBed.gender = toWard.hasGender ? (sBed.gender || 'male') : undefined;
                     sBed.text = ""; sBed.state = "vacant"; sBed.gender = fromWard.hasGender ? 'male' : undefined;
                     updateWardTimestamp(tFromId); updateWardTimestamp(tTargetId);
-                    renderDashboard(); autoSave();
+                    renderDashboard(); autoSave(`Transferred patient from ${fromWard.name} to ${toWard.name}`);
                 }
             }
             closeTransferModal();
@@ -632,50 +715,202 @@
             setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); tBedId = null; tFromId = null; tTargetId = null; }, 300);
         }
 
+        // --- Data Packaging Logic ---
+        // Reads raw data array and extracts SYSTEM_HISTORY if present
+        function extractHistoryAndData(rawData) {
+            let data = [];
+            let history = [];
+            
+            if (Array.isArray(rawData)) {
+                data = [...rawData]; 
+            } else if (rawData && rawData.data) {
+                data = [...rawData.data];
+                history = rawData.history || [];
+            }
+
+            // Find SYSTEM_HISTORY node that was packed inside the array
+            const histIdx = data.findIndex(w => w.id === "SYSTEM_HISTORY");
+            if (histIdx !== -1) {
+                history = data[histIdx].log || [];
+                data.splice(histIdx, 1); // Remove from rendering list
+            }
+            
+            return { data: applyDefaultFlags(data), history: history };
+        }
+
+        // Pack appData and historyLog into ONE array for safe Cloud Saving
+        function getPayloadForSaving() {
+            // Keep history limit to 100 since the backend now supports chunking
+            if (historyLog.length > 100) historyLog = historyLog.slice(0, 100);
+            
+            const payload = [...appData]; 
+            payload.push({
+                id: "SYSTEM_HISTORY",
+                log: historyLog,
+                beds: [] 
+            });
+            return payload;
+        }
+
+        // --- History & Rollback Logic ---
+        function saveToHistory(actionDesc = "System Update") {
+            const currentState = JSON.stringify(appData);
+            if (historyLog.length === 0 || historyLog[0].data !== currentState) {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                const dateStr = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Bangkok', day: '2-digit', month: '2-digit', year: 'numeric' });
+                historyLog.unshift({ time: timeStr, dateStr: `${dateStr}, ${timeStr}`, action: actionDesc, data: currentState });
+                
+                // Allow exactly 100 histories to be stored
+                if (historyLog.length > 100) {
+                    historyLog = historyLog.slice(0, 100);
+                }
+            }
+        }
+
+        function openHistoryModal() {
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+            
+            if (historyLog.length === 0) {
+                list.innerHTML = `<div class="text-center text-gray-400 font-bold p-6 italic uppercase tracking-widest">No history available</div>`;
+            } else {
+                historyLog.forEach((entry, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = `w-full text-left px-5 py-4 rounded-2xl border transition-all flex items-center justify-between group border-gray-100 bg-gray-50 hover:bg-blue-50 shadow-sm mb-2`;
+                    btn.innerHTML = `
+                        <div class="flex items-center gap-4">
+                            <i class="ph-bold ph-clock text-gray-400 group-hover:text-blue-500 text-3xl"></i>
+                            <div class="flex flex-col">
+                                <div class="flex items-center gap-3">
+                                    <span class="font-black text-gray-700 text-xl tracking-widest">${entry.time}</span>
+                                    ${index === 0 ? '<span class="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-black uppercase tracking-widest">Current State</span>' : ''}
+                                </div>
+                                <span class="text-sm font-bold text-gray-500 mt-1">${entry.action}</span>
+                            </div>
+                        </div>
+                        <span class="text-sm font-black text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-widest">Restore</span>
+                    `;
+                    btn.onclick = () => rollbackTo(index);
+                    list.appendChild(btn);
+                });
+            }
+            
+            const modal = document.getElementById('history-modal'), content = document.getElementById('history-modal-content');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            setTimeout(() => { modal.classList.add('opacity-100'); content.classList.remove('scale-90'); content.classList.add('scale-100'); }, 10);
+        }
+
+        function closeHistoryModal() {
+            const modal = document.getElementById('history-modal'), content = document.getElementById('history-modal-content');
+            modal.classList.remove('opacity-100'); content.classList.remove('scale-100'); content.classList.add('scale-90');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+
+        // --- Captcha Logic for Clearing History ---
+        function generateCaptcha() {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let code = '';
+            for(let i = 0; i < 4; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+
+        function openCaptchaModal() {
+            if (historyLog.length === 0) return; 
+            currentCaptchaCode = generateCaptcha();
+            document.getElementById('captcha-code-display').innerText = currentCaptchaCode;
+            document.getElementById('captcha-input').value = '';
+            document.getElementById('captcha-error').classList.add('hidden');
+            
+            const modal = document.getElementById('captcha-modal'), content = document.getElementById('captcha-modal-content');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            setTimeout(() => { 
+                modal.classList.add('opacity-100'); 
+                content.classList.remove('scale-90'); 
+                content.classList.add('scale-100');
+                document.getElementById('captcha-input').focus();
+            }, 10);
+        }
+
+        function closeCaptchaModal() {
+            const modal = document.getElementById('captcha-modal'), content = document.getElementById('captcha-modal-content');
+            modal.classList.remove('opacity-100'); content.classList.remove('scale-100'); content.classList.add('scale-90');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+
+        function verifyCaptchaAndClear() {
+            const input = document.getElementById('captcha-input').value.toUpperCase();
+            if (input === currentCaptchaCode) {
+                historyLog = [];
+                saveToHistory("History Cleared"); 
+                autoSave("History Cleared");
+                closeCaptchaModal();
+                openHistoryModal(); 
+            } else {
+                document.getElementById('captcha-error').classList.remove('hidden');
+                document.getElementById('captcha-input').value = '';
+                document.getElementById('captcha-input').focus();
+                currentCaptchaCode = generateCaptcha();
+                document.getElementById('captcha-code-display').innerText = currentCaptchaCode;
+            }
+        }
+
+        function rollbackTo(index) {
+            if(confirm(`Are you sure you want to revert all data to the state at ${historyLog[index].time}?`)) {
+                appData = JSON.parse(historyLog[index].data);
+                renderDashboard();
+                autoSave(`Restored history to ${historyLog[index].time}`); 
+                closeHistoryModal();
+            }
+        }
+
         // --- Core Operations ---
         function forceUpdateWardTime(wardId) {
+            const w = appData.find(w => w.id === wardId);
             updateWardTimestamp(wardId);
             renderDashboard();
-            autoSave();
+            autoSave(`Confirmed update time for ${w ? w.name : 'Ward'}`);
         }
 
         function toggleBedState(bedId) {
             const info = findBedInfo(bedId); if (!info) return;
             info.bed.state = cycleState(info.bed.state);
-            renderDashboard(); autoSave();
+            renderDashboard(); autoSave(`Changed status to ${info.bed.state.toUpperCase()} in ${info.ward.name}`);
         }
         function toggleBedGender(bedId) {
             const info = findBedInfo(bedId); if (!info) return;
             info.bed.gender = (info.bed.gender === 'female') ? 'male' : 'female';
-            renderDashboard(); autoSave();
+            renderDashboard(); autoSave(`Changed gender to ${info.bed.gender.toUpperCase()} in ${info.ward.name}`);
         }
         function updateBedText(bedId, text) {
-            const info = findBedInfo(bedId); if (info) { info.bed.text = text; autoSave(); }
+            const info = findBedInfo(bedId); if (info) { info.bed.text = text; autoSave(`Updated patient info in ${info.ward.name}`); }
         }
         function updateWardName(wardId, name) {
             const ward = appData.find(w => w.id === wardId);
-            if (ward && ward.name !== name) { ward.name = name; renderDashboard(); autoSave(); }
+            if (ward && ward.name !== name) { ward.name = name; renderDashboard(); autoSave(`Renamed ward to ${name}`); }
         }
         function addBed(wardId) {
             const ward = appData.find(w => w.id === wardId); if (!ward) return;
             if (!ward.beds) ward.beds = [];
             ward.beds.push({ id: generateId(), text: "", state: "vacant", gender: ward.hasGender ? "male" : undefined });
-            updateWardTimestamp(wardId); renderDashboard(); autoSave();
+            updateWardTimestamp(wardId); renderDashboard(); autoSave(`Added a new bed to ${ward.name}`);
         }
         function deleteBed(bedId) {
             const info = findBedInfo(bedId); if (!info) return;
             info.ward.beds.splice(info.bedIndex, 1);
-            updateWardTimestamp(info.ward.id); renderDashboard(); autoSave();
+            updateWardTimestamp(info.ward.id); renderDashboard(); autoSave(`Removed a bed from ${info.ward.name}`);
         }
         function addWard() {
             const colors = ["bg-rose-100 border-rose-300 text-rose-900", "bg-sky-100 border-sky-300 text-sky-900", "bg-emerald-100 border-emerald-300 text-emerald-900"];
             appData.push({ id: generateId(), name: "NEW WARD", color: colors[Math.floor(Math.random() * colors.length)], beds: [], isDefault: false, lastUpdated: "" });
-            renderDashboard(); autoSave();
+            renderDashboard(); autoSave(`Created a new ward`);
         }
         function deleteWard(wardId) {
             const ward = appData.find(w => w.id === wardId);
             if (ward && ward.isDefault) { alert("Core wards cannot be removed."); return; }
-            if (confirm("Remove ward?")) { appData = appData.filter(w => w.id !== wardId); renderDashboard(); autoSave(); }
+            if (confirm("Remove ward?")) { appData = appData.filter(w => w.id !== wardId); renderDashboard(); autoSave(`Deleted ward ${ward.name}`); }
         }
         function findBedInfo(bedId) {
             for (let i = 0; i < appData.length; i++) {
@@ -692,11 +927,13 @@
                 if (toWard.hasGender && !moved.gender) moved.gender = 'male';
                 toWard.beds.splice(evt.newIndex, 0, moved);
                 updateWardTimestamp(fromWard.id); updateWardTimestamp(toWard.id);
-                renderDashboard(); autoSave();
+                renderDashboard(); 
+                if (fromWard.id === toWard.id) autoSave(`Reordered beds in ${fromWard.name}`);
+                else autoSave(`Moved bed from ${fromWard.name} to ${toWard.name}`);
             }
         }
 
-        // --- Persistence ---
+        // --- Data Persistence ---
         function updateClock() {
             const now = new Date();
             const dateStr = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Bangkok', day: '2-digit', month: 'short', year: 'numeric' });
@@ -718,19 +955,25 @@
             return data;
         }
 
-        function autoSave() {
+        function autoSave(actionDesc = "Auto Saved") {
             hasPendingChanges = true; const url = getApiUrl();
-            localStorage.setItem('er_dashboard_data', JSON.stringify(appData));
+            
+            saveToHistory(actionDesc);
+            
+            const payloadArray = getPayloadForSaving();
+            localStorage.setItem('er_dashboard_data', JSON.stringify(payloadArray));
+            
             if (!url) { hasPendingChanges = false; return; }
             clearTimeout(saveTimeout);
             document.getElementById('sync-status').innerText = "UPDATING...";
-            saveTimeout = setTimeout(() => saveToCloud(url), 1500); 
+            
+            saveTimeout = setTimeout(() => saveToCloud(url, payloadArray), 1500); 
         }
 
-        async function saveToCloud(url) {
+        async function saveToCloud(url, payloadArray) {
             hasPendingChanges = false; isSaving = true; 
             try {
-                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(appData) });
+                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payloadArray) });
                 if (res.ok) {
                     document.getElementById('sync-status').innerHTML = 'Synced';
                     syncBlockUntil = Date.now() + 8000; 
@@ -743,10 +986,15 @@
             if (!url || isInteracting || isSaving || hasPendingChanges || Date.now() < syncBlockUntil) return;
             try {
                 const res = await fetch(url);
-                const data = await res.json();
+                const rawData = await res.json();
                 if (isInteracting || isSaving || hasPendingChanges) return; 
-                if (Array.isArray(data) && JSON.stringify(applyDefaultFlags(data)) !== JSON.stringify(appData)) {
-                    appData = applyDefaultFlags(data);
+                
+                const extracted = extractHistoryAndData(rawData);
+
+                if (JSON.stringify(extracted.data) !== JSON.stringify(appData)) {
+                    appData = extracted.data;
+                    historyLog = extracted.history;
+                    saveToHistory("Cloud Sync Updated Data"); 
                     renderDashboard();
                 }
             } catch (e) {}
@@ -758,16 +1006,33 @@
             if (!url) return;
             try {
                 const res = await fetch(url);
-                const data = await res.json();
-                if (Array.isArray(data) && data.length > 0) appData = applyDefaultFlags(data);
-                else { appData = JSON.parse(JSON.stringify(defaultWards)); await saveToCloud(url); }
+                const rawData = await res.json();
+                
+                const extracted = extractHistoryAndData(rawData);
+                
+                if (extracted.data && extracted.data.length > 0) {
+                    appData = extracted.data;
+                    historyLog = extracted.history;
+                    saveToHistory("Initial Cloud Load");
+                } else {
+                    appData = JSON.parse(JSON.stringify(defaultWards));
+                    saveToHistory("Initialized Empty Wards");
+                }
                 renderDashboard();
             } catch (e) { loadLocalData(); }
         }
 
         function loadLocalData() {
             const local = localStorage.getItem('er_dashboard_data');
-            appData = local ? applyDefaultFlags(JSON.parse(local)) : JSON.parse(JSON.stringify(defaultWards));
+            if (local) {
+                const extracted = extractHistoryAndData(JSON.parse(local));
+                appData = extracted.data;
+                historyLog = extracted.history;
+                saveToHistory("Loaded Local Data");
+            } else {
+                appData = JSON.parse(JSON.stringify(defaultWards));
+                saveToHistory("Loaded Local Data");
+            }
             renderDashboard();
         }
 
