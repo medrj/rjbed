@@ -228,7 +228,9 @@
             const ward = appData.find(w => w.id === wardId);
             if (ward) {
                 const now = new Date();
-                ward.lastUpdated = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+                const dateStr = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Bangkok', day: '2-digit', month: '2-digit', year: '2-digit' });
+                const timeStr = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+                ward.lastUpdated = `${dateStr} ${timeStr}`;
             }
         }
 
@@ -374,7 +376,7 @@
                 };
                 
                 const updateStamp = document.createElement('div');
-                updateStamp.className = "text-[10px] font-black uppercase tracking-widest opacity-40 -mt-1";
+                updateStamp.className = "text-[9px] font-black uppercase tracking-widest opacity-40 -mt-1 truncate";
                 updateStamp.innerText = ward.lastUpdated ? `Update: ${ward.lastUpdated}` : "NEW";
 
                 leftHead.appendChild(titleDiv);
