@@ -19,16 +19,61 @@
 
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #fce7f3 0%, #e0f2fe 50%, #dcfce7 100%);
+            /* High-Tech Breathing Background Animation */
+            background: linear-gradient(125deg, #fce7f3 0%, #e0f2fe 35%, #dcfce7 70%, #fef3c7 100%);
+            background-size: 400% 400%;
+            animation: breathe-bg 15s ease infinite alternate;
             min-height: 100vh;
         }
+
+        @keyframes breathe-bg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- WOW Factor Animated Border for Summary Board --- */
+        .wow-summary-wrapper {
+            position: relative;
+            border-radius: 1.5rem;
+            padding: 3px; 
+            background: linear-gradient(270deg, #3b82f6, #06b6d4, #10b981, #3b82f6);
+            background-size: 300% 300%;
+            animation: animated-gradient 5s ease infinite alternate;
+            box-shadow: 0 10px 40px -10px rgba(6, 182, 212, 0.5);
+            z-index: 1;
+        }
+        @keyframes animated-gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .wow-summary-inner {
+            background: rgba(255, 255, 255, 0.93);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: calc(1.5rem - 3px);
+            height: 100%;
+            width: 100%;
+            z-index: 2;
+        }
+
+        /* Hover effect for standard ward boxes */
+        .ward-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ward-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.15);
+        }
         
+        /* Bed Box within grid */
         .bed-box { 
             transition: all 0.2s ease; 
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06); 
-            height: 5.5rem; /* FIXED HEIGHT FOR SYMMETRY */
+            height: 5.5rem; 
             display: flex;
             flex-direction: column;
             position: relative; 
@@ -41,7 +86,7 @@
         
         /* Medical State Colors */
         .state-reserved { 
-            background-color: rgba(248, 113, 113, 0.85);
+            background-color: rgba(248, 113, 113, 0.88);
             color: #ffffff; 
             border: 1px solid rgba(255, 255, 255, 0.5); 
         }
@@ -49,7 +94,7 @@
         .state-reserved .color-btn { color: #fee2e2; }
         
         .state-vacant { 
-            background-color: rgba(134, 239, 172, 0.85);
+            background-color: rgba(134, 239, 172, 0.88);
             color: #064e3b; 
             border: 1px solid rgba(255, 255, 255, 0.5); 
         }
@@ -57,47 +102,47 @@
         .state-vacant .color-btn { color: #166534; }
         
         .state-discharge { 
-            background-color: rgba(56, 189, 248, 0.85);
+            background-color: rgba(56, 189, 248, 0.88);
             color: #ffffff; 
             border: 1px solid rgba(255, 255, 255, 0.5); 
         }
         .state-discharge .text-input { color: #ffffff; text-shadow: 0 1px 1px rgba(0,0,0,0.1); }
         .state-discharge .color-btn { color: #e0f2fe; }
 
-        /* Dynamic Text Input: Expanded to full box with padding for multiple icons */
+        /* Dynamic Text Input: Fixed Position & Centered Padding */
         .text-input {
             width: 100%;
             height: 100%;
             border: 1px dashed transparent; 
             border-radius: 8px;
-            padding: 4px 80px 28px 6px; /* PROTECT TEXT FROM 3 BUTTONS */
+            padding: 10px 85px 32px 12px; /* Fixed text position with better gutters */
             opacity: 0.95;
             transition: all 0.2s ease;
             font-size: 0.85rem; 
             font-weight: 700;
             word-break: break-word;
-            line-height: 1.1;
+            line-height: 1.2;
             cursor: text;
             overflow-y: auto;
             scrollbar-width: none;
-            display: block;
+            display: flex;
+            align-items: flex-start; /* Start from top but with better padding */
         }
         
         .text-input::-webkit-scrollbar { display: none; }
         
-        /* Show border ONLY when hover or focus */
         .text-input:hover, .text-input:focus {
             opacity: 1;
             border: 1px dashed rgba(255, 255, 255, 0.6); 
             outline: none;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.15);
         }
         
         /* Sortable styles */
         .sortable-ghost { opacity: 0.2 !important; }
         .sortable-drag { 
             z-index: 9999 !important;
-            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.2) !important;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25) !important;
         }
 
         @keyframes popIn {
@@ -117,13 +162,13 @@
     <div class="w-full max-w-[2800px] mx-auto">
         
         <!-- Header Section -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-3 border-b border-white/40 pb-4">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-5 border-b border-white/40 pb-5">
             <div class="flex flex-col">
                 <h1 class="text-3xl font-black text-gray-800 flex items-center gap-3 drop-shadow-sm italic tracking-tighter uppercase">
-                    <i class="ph-fill ph-hospital text-blue-600 text-5xl"></i>
+                    <i class="ph-fill ph-hospital text-blue-600 text-5xl drop-shadow-md"></i>
                     RJ MED BED MANAGER
                 </h1>
-                <div class="flex flex-wrap gap-4 mt-2 items-center">
+                <div class="flex flex-wrap gap-4 mt-3 items-center">
                     <span class="flex items-center gap-2 text-[11px] font-bold text-gray-600 uppercase tracking-tighter"><span class="w-4 h-4 rounded bg-red-400 border border-red-500 shadow-sm"></span> Reserved</span>
                     <span class="flex items-center gap-2 text-[11px] font-bold text-gray-600 uppercase tracking-tighter"><span class="w-4 h-4 rounded bg-green-300 border border-green-500 shadow-sm"></span> Vacant</span>
                     <span class="flex items-center gap-2 text-[11px] font-bold text-gray-600 uppercase tracking-tighter"><span class="w-4 h-4 rounded bg-sky-400 border border-sky-500 shadow-sm"></span> Plan D/C</span>
@@ -131,7 +176,7 @@
                     <!-- Font Selection Dropdown -->
                     <div class="flex items-center gap-1.5 border-l-2 border-gray-200/50 pl-4 ml-1">
                         <i class="ph-bold ph-text-aa text-gray-500 text-lg"></i>
-                        <select id="font-selector" class="bg-white/50 backdrop-blur-sm border border-gray-200 text-[11px] font-bold text-gray-700 uppercase tracking-tighter rounded px-2 py-1 outline-none cursor-pointer hover:bg-white/80 transition-colors">
+                        <select id="font-selector" class="bg-white/60 backdrop-blur-sm border border-gray-200 text-[11px] font-bold text-gray-700 uppercase tracking-tighter rounded px-2 py-1 outline-none cursor-pointer hover:bg-white/90 transition-colors">
                             <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">System Default</option>
                             <option value="'Sarabun', sans-serif">Sarabun (ทางการ)</option>
                             <option value="'Kanit', sans-serif">Kanit (โมเดิร์น)</option>
@@ -153,58 +198,87 @@
                 </div>
             </div>
 
-            <!-- Integrated Time & Status -->
-            <div class="bg-white/40 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/60 shadow-inner flex flex-col items-center md:items-end min-w-[300px]">
-                <div id="current-time" class="text-4xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-blue-700 via-sky-600 to-cyan-500 font-mono" style="font-variant-numeric: tabular-nums;">
-                    --:--:--
-                </div>
-                <div id="current-date" class="text-[11px] font-bold text-gray-500 tracking-[0.2em] uppercase">
-                    ---
-                </div>
+            <!-- Integrated WOW Time & Status Module -->
+            <div class="relative group min-w-[320px] md:min-w-[450px]">
+                <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 via-sky-400 to-indigo-600 rounded-[1.8rem] blur-md opacity-30 group-hover:opacity-50 transition duration-1000 animate-pulse"></div>
                 
-                <div class="flex items-center gap-3 mt-1 pt-1 border-t border-gray-200/50 w-full justify-center md:justify-end">
-                    <div class="flex items-center gap-1">
-                        <span class="relative flex h-2 w-2">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                        <div id="sync-status" class="text-[10px] font-bold text-emerald-700 uppercase">Connected</div>
+                <div class="relative bg-white/80 backdrop-blur-2xl px-10 py-6 rounded-[1.8rem] border border-white/60 shadow-2xl flex flex-col items-center md:items-end">
+                    <div id="current-time" class="text-6xl md:text-7xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-br from-blue-900 via-blue-700 to-cyan-600 font-mono drop-shadow-md select-none" style="font-variant-numeric: tabular-nums;">
+                        --:--:--
                     </div>
-                    <div class="text-[9px] text-gray-400 font-mono uppercase tracking-tighter">Live Cloud Logic</div>
+                    <div id="current-date" class="text-base md:text-lg font-bold text-gray-500 tracking-[0.3em] uppercase mt-1 opacity-80">
+                        ---
+                    </div>
+                    
+                    <div class="flex items-center gap-4 mt-4 pt-4 border-t border-gray-200/60 w-full justify-center md:justify-end">
+                        <div class="flex items-center gap-2 bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-100 shadow-sm transition-all hover:bg-emerald-100">
+                            <span class="relative flex h-3 w-3">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                            </span>
+                            <div id="sync-status" class="text-[12px] font-black text-emerald-800 uppercase tracking-widest">CONNECTED</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 2-Column Summary Board -->
-        <div class="flex flex-col mb-4 items-stretch gap-3">
-            <div id="summary-board-container" class="hidden w-full bg-white/80 backdrop-blur-xl rounded-2xl shadow-md border border-white/90 p-5 relative overflow-hidden">
-                <button id="copy-summary-btn" class="absolute top-4 right-4 text-gray-400 hover:text-blue-600 bg-white/60 hover:bg-white rounded-lg p-2 transition-all border border-gray-100 shadow-sm z-10" title="Copy Summary">
-                    <i class="ph-bold ph-copy text-2xl"></i>
-                </button>
-                <div id="summary-content" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2 h-auto pr-10"></div>
+        <!-- WOW Summary Board -->
+        <div class="flex flex-col mb-8 items-stretch gap-3">
+            <div id="summary-board-wrapper" class="hidden w-full wow-summary-wrapper">
+                <div id="summary-board-container" class="wow-summary-inner p-8 relative overflow-hidden">
+                    <button id="copy-summary-btn" class="absolute top-6 right-6 text-gray-400 hover:text-blue-600 bg-white/70 hover:bg-white rounded-lg p-2 transition-all border border-gray-100 shadow-sm z-10" title="Copy Summary">
+                        <i class="ph-bold ph-copy text-2xl"></i>
+                    </button>
+                    <div id="summary-content" class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-4 h-auto pr-10"></div>
+                </div>
             </div>
 
             <!-- Database URL Config -->
-            <div id="url-input-container" class="hidden bg-white/60 backdrop-blur-md p-3 rounded-2xl border border-white/80 shadow-sm flex items-center self-end max-w-sm">
-                <input type="text" id="api-url" placeholder="Database URL" class="flex-1 text-[11px] border border-gray-300 rounded-l-lg px-3 py-2 focus:outline-none bg-white/80">
-                <button onclick="syncData()" class="bg-blue-600 text-white px-4 py-2 rounded-r-lg text-[11px] font-bold">Sync</button>
+            <div id="url-input-container" class="hidden bg-white/40 backdrop-blur-md rounded-2xl shadow-sm border border-white/60 p-3 self-end max-w-sm">
+                <div class="flex items-center">
+                    <input type="text" id="api-url" placeholder="Database URL" class="flex-1 text-[11px] border border-gray-300 rounded-l-lg px-3 py-2 focus:outline-none bg-white/80">
+                    <button onclick="syncData()" class="bg-blue-600 text-white px-4 py-2 rounded-r-lg text-[11px] font-bold hover:bg-blue-700 transition-colors">Sync</button>
+                </div>
             </div>
         </div>
 
-        <!-- Ward Filters (Nodes) -->
-        <div class="flex flex-wrap gap-2 mb-3" id="ward-filter-container">
-            <button onclick="setFilter('All')" id="filter-All" class="filter-btn px-5 py-2 rounded-xl text-sm font-black tracking-widest uppercase transition-all bg-blue-600 text-white shadow-md border border-blue-600">All Wards</button>
-            <button onclick="setFilter('ตึกทศมินทร์')" id="filter-ตึกทศมินทร์" class="filter-btn px-5 py-2 rounded-xl text-sm font-bold tracking-widest uppercase transition-all bg-white/60 text-gray-600 hover:bg-white border border-gray-200">ตึกทศมินทร์</button>
-            <button onclick="setFilter('ตึกนอก')" id="filter-ตึกนอก" class="filter-btn px-5 py-2 rounded-xl text-sm font-bold tracking-widest uppercase transition-all bg-white/60 text-gray-600 hover:bg-white border border-gray-200">ตึกนอก</button>
-            <button onclick="setFilter('ตึก COVID')" id="filter-ตึก COVID" class="filter-btn px-5 py-2 rounded-xl text-sm font-bold tracking-widest uppercase transition-all bg-white/60 text-gray-600 hover:bg-white border border-gray-200">ตึก COVID</button>
+        <!-- Ward Filters -->
+        <div class="flex flex-wrap gap-3 mb-6" id="ward-filter-container">
+            <button onclick="setFilter('All')" id="filter-All" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-black tracking-widest uppercase transition-all bg-blue-600 text-white shadow-lg border border-blue-600 scale-105">All Wards</button>
+            <button onclick="setFilter('ตึกทศมินทร์')" id="filter-ตึกทศมินทร์" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold tracking-widest uppercase transition-all bg-white/70 text-gray-600 hover:bg-white border border-gray-200 hover:shadow-md">ตึกทศมินทร์</button>
+            <button onclick="setFilter('ตึกนอก')" id="filter-ตึกนอก" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold tracking-widest uppercase transition-all bg-white/70 text-gray-600 hover:bg-white border border-gray-200 hover:shadow-md">ตึกนอก</button>
+            <button onclick="setFilter('ตึก COVID')" id="filter-ตึก COVID" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold tracking-widest uppercase transition-all bg-white/70 text-gray-600 hover:bg-white border border-gray-200 hover:shadow-md">ตึก COVID</button>
         </div>
 
         <!-- 2-Column Dashboard Container -->
-        <div id="dashboard-container" class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start"></div>
+        <div id="dashboard-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start pb-10"></div>
 
-        <button onclick="addWard()" class="mt-6 w-full py-4 border-2 border-dashed border-blue-300 bg-white/30 backdrop-blur-sm rounded-2xl text-blue-600 font-black text-xl hover:bg-white/50 transition-all flex items-center justify-center gap-3 shadow-sm uppercase tracking-widest">
-            <i class="ph ph-plus-circle text-3xl"></i> Add New Ward
+        <button onclick="openAddWardModal()" class="mb-10 w-full py-5 border-2 border-dashed border-blue-300 bg-white/40 backdrop-blur-sm rounded-[1.8rem] text-blue-600 font-black text-xl hover:bg-white/70 transition-all flex items-center justify-center gap-3 shadow-sm uppercase tracking-widest group">
+            <i class="ph ph-plus-circle text-3xl group-hover:scale-125 transition-transform"></i> Add New Ward
         </button>
+
+        <!-- New Ward Modal -->
+        <div id="add-ward-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden items-center justify-center p-4 opacity-0 transition-all duration-300">
+            <div class="bg-white border border-white/60 rounded-3xl shadow-2xl w-full max-w-sm p-8 transform scale-90 transition-all duration-300" id="add-ward-modal-content">
+                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                    <h3 class="text-xl font-black text-blue-600 flex items-center gap-2 uppercase tracking-widest italic">
+                        <i class="ph-bold ph-plus-circle"></i> Create New Ward
+                    </h3>
+                    <button onclick="closeAddWardModal()" class="text-gray-400 bg-gray-100 rounded-full p-1.5 hover:bg-gray-200 transition-colors">
+                        <i class="ph-bold ph-x"></i>
+                    </button>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 tracking-widest">Enter Ward Name</label>
+                    <input type="text" id="new-ward-name" class="w-full text-center font-black text-2xl border-2 border-gray-200 rounded-2xl px-4 py-4 focus:border-blue-500 focus:outline-none uppercase italic" placeholder="e.g. 22B" autocomplete="off">
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeAddWardModal()" class="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors uppercase tracking-widest">Cancel</button>
+                    <button onclick="confirmAddWard()" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors uppercase tracking-widest shadow-md">Create</button>
+                </div>
+            </div>
+        </div>
 
         <!-- Transfer Modal -->
         <div id="transfer-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-md z-[9999] hidden items-center justify-center p-4 opacity-0 transition-all duration-300">
@@ -254,7 +328,7 @@
                     </button>
                 </div>
                 <p class="text-sm text-gray-600 mb-4 font-bold">To clear all history, please enter the captcha code below:</p>
-                <div class="flex justify-center items-center bg-gray-100 rounded-xl p-3 mb-4 select-none">
+                <div class="flex justify-center items-center bg-gray-100 rounded-xl p-3 mb-4 select-none border-2 border-gray-200">
                     <span id="captcha-code-display" class="text-3xl font-mono font-black text-gray-800 tracking-[0.3em] line-through decoration-gray-400 decoration-2"></span>
                 </div>
                 <input type="text" id="captcha-input" class="w-full text-center font-mono text-xl border-2 border-gray-200 rounded-xl px-4 py-3 mb-4 focus:border-blue-500 focus:outline-none uppercase" placeholder="Enter code" autocomplete="off" maxlength="4">
@@ -288,14 +362,14 @@
 
         let appData = [];
         let sortableInstances = [];
-        let historyLog = []; // Stores the state history
-        let currentCaptchaCode = ""; // Captcha variable
+        let historyLog = []; 
+        let currentCaptchaCode = ""; 
         let isInteracting = false; 
         let isSaving = false;
         let hasPendingChanges = false; 
         let syncBlockUntil = 0; 
         let saveTimeout; 
-        let currentFilter = 'All'; // Filter State
+        let currentFilter = 'All'; 
 
         function getApiUrl() { return HARDCODED_API_URL.trim() !== "" ? HARDCODED_API_URL.trim() : document.getElementById('api-url').value; }
 
@@ -315,7 +389,6 @@
             }
         }
 
-        // Categorizer function
         function getWardCategory(name) {
             if (!name) return "Other";
             const n = name.toLowerCase();
@@ -329,16 +402,16 @@
             currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 if (btn.id === 'filter-' + filter) {
-                    btn.className = "filter-btn px-5 py-2 rounded-xl text-sm font-black tracking-widest uppercase transition-all bg-blue-600 text-white shadow-md border border-blue-600";
+                    btn.className = "filter-btn px-6 py-2.5 rounded-2xl text-sm font-black tracking-widest uppercase transition-all bg-blue-600 text-white shadow-lg border border-blue-600 scale-105";
                 } else {
-                    btn.className = "filter-btn px-5 py-2 rounded-xl text-sm font-bold tracking-widest uppercase transition-all bg-white/60 text-gray-600 hover:bg-white border border-gray-200";
+                    btn.className = "filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold tracking-widest uppercase transition-all bg-white/70 text-gray-600 hover:bg-white border border-gray-200 hover:shadow-md";
                 }
             });
             renderDashboard();
         }
 
         function updateSummaryBoard() {
-            const summaryContainer = document.getElementById('summary-board-container');
+            const summaryWrapper = document.getElementById('summary-board-wrapper');
             const summaryContent = document.getElementById('summary-content');
             let htmlContent = '';
             let observeHtmlContent = '';
@@ -376,44 +449,40 @@
 
                 if (isGendered) {
                     if (vacant === 0) {
-                        statusChips.push(`<span class="bg-red-500 text-white font-black px-2.5 py-0.5 rounded text-sm whitespace-nowrap min-w-[50px] text-center shadow-sm uppercase tracking-tighter">เต็ม</span>`);
+                        statusChips.push(`<span class="bg-red-500 text-white font-black px-3 py-1 rounded text-sm whitespace-nowrap min-w-[50px] text-center shadow-sm uppercase tracking-tighter">เต็ม</span>`);
                         plainParts.push(`เต็ม`);
                     } else {
                         let vacantText = "";
-                        if (vacantMale > 0 && vacantFemale > 0) {
-                            vacantText = `ว่าง ช ${vacantMale}, ญ ${vacantFemale}`;
-                        } else if (vacantMale > 0) {
-                            vacantText = `ว่าง ช ${vacantMale}`;
-                        } else if (vacantFemale > 0) {
-                            vacantText = `ว่าง ญ ${vacantFemale}`;
-                        }
+                        if (vacantMale > 0 && vacantFemale > 0) vacantText = `ว่าง ช ${vacantMale}, ญ ${vacantFemale}`;
+                        else if (vacantMale > 0) vacantText = `ว่าง ช ${vacantMale}`;
+                        else if (vacantFemale > 0) vacantText = `ว่าง ญ ${vacantFemale}`;
                         
-                        statusChips.push(`<span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-sm whitespace-nowrap min-w-[50px] text-center border border-emerald-200">${vacantText}</span>`);
+                        statusChips.push(`<span class="bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded text-sm whitespace-nowrap min-w-[50px] text-center border border-emerald-200">${vacantText}</span>`);
                         plainParts.push(vacantText);
                     }
                 } else {
                     if (vacant === 0) {
-                        statusChips.push(`<span class="bg-red-500 text-white font-black px-2.5 py-0.5 rounded text-sm whitespace-nowrap min-w-[50px] text-center shadow-sm uppercase tracking-tighter">เต็ม</span>`);
+                        statusChips.push(`<span class="bg-red-500 text-white font-black px-3 py-1 rounded text-sm whitespace-nowrap min-w-[50px] text-center shadow-sm uppercase tracking-tighter">เต็ม</span>`);
                         plainParts.push(`เต็ม`);
                     } else {
-                        statusChips.push(`<span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-sm whitespace-nowrap min-w-[50px] text-center border border-emerald-200">ว่าง ${vacant}</span>`);
+                        statusChips.push(`<span class="bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded text-sm whitespace-nowrap min-w-[50px] text-center border border-emerald-200">ว่าง ${vacant}</span>`);
                         plainParts.push(`ว่าง ${vacant}`);
                     }
                 }
 
                 if (reserved > 0) {
-                    statusChips.push(`<span class="bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded text-sm whitespace-nowrap min-w-[70px] text-center border border-rose-200">จองมาแล้ว ${reserved}</span>`);
+                    statusChips.push(`<span class="bg-rose-100 text-rose-800 font-bold px-3 py-1 rounded text-sm whitespace-nowrap min-w-[70px] text-center border border-rose-200">จองมาแล้ว ${reserved}</span>`);
                     plainParts.push(`จองมาแล้ว ${reserved}`);
                 }
                 if (discharge > 0) {
-                    statusChips.push(`<span class="bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded text-sm whitespace-nowrap min-w-[80px] text-center border border-sky-200">Plan D/C ${discharge}</span>`);
+                    statusChips.push(`<span class="bg-sky-100 text-sky-800 font-bold px-3 py-1 rounded text-sm whitespace-nowrap min-w-[80px] text-center border border-sky-200">Plan D/C ${discharge}</span>`);
                     plainParts.push(`Plan D/C ${discharge}`);
                 }
 
                 let rowHtml = `
-                    <div class="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0 overflow-hidden">
-                        <span class="font-black w-24 text-gray-800 flex-shrink-0 italic tracking-tighter truncate uppercase text-lg">${displayName}</span>
-                        <div class="flex gap-2 flex-wrap">
+                    <div class="flex items-center gap-4 py-2.5 border-b border-gray-100 last:border-0 overflow-hidden">
+                        <span class="font-black w-24 text-gray-800 flex-shrink-0 italic tracking-tighter truncate uppercase text-xl">${displayName}</span>
+                        <div class="flex gap-2.5 flex-wrap">
                             ${statusChips.join('')}
                         </div>
                     </div>`;
@@ -433,7 +502,7 @@
 
             if (hasValidData) {
                 summaryContent.innerHTML = htmlContent + observeHtmlContent;
-                summaryContainer.classList.remove('hidden');
+                summaryWrapper.classList.remove('hidden');
                 document.getElementById('copy-summary-btn').onclick = () => {
                     const el = document.createElement('textarea');
                     el.value = (plainTextToCopy + observePlainText).trim();
@@ -442,7 +511,7 @@
                     btn.innerHTML = '<i class="ph-bold ph-check text-emerald-500 text-3xl"></i>';
                     setTimeout(() => { btn.innerHTML = '<i class="ph-bold ph-copy text-2xl"></i>'; }, 2000);
                 };
-            } else summaryContainer.classList.add('hidden');
+            } else summaryWrapper.classList.add('hidden');
         }
 
         function renderDashboard() {
@@ -452,7 +521,7 @@
             sortableInstances = [];
 
             if (!appData || appData.length === 0) {
-                container.innerHTML = `<div class="col-span-full p-12 text-center font-bold text-gray-400 uppercase tracking-widest italic text-3xl">Loading Hospital Data...</div>`;
+                container.innerHTML = `<div class="col-span-full p-20 text-center font-bold text-gray-400 uppercase tracking-widest italic text-4xl">Loading Hospital Data...</div>`;
                 return;
             }
 
@@ -465,11 +534,11 @@
                 }
 
                 const wardDiv = document.createElement('div');
-                wardDiv.className = `bg-white/60 backdrop-blur-lg rounded-3xl shadow-sm border border-white/80 overflow-hidden mb-1`;
+                wardDiv.className = `bg-white/70 backdrop-blur-xl rounded-3xl shadow-sm border border-white/80 overflow-hidden mb-2 ward-hover`;
                 wardDiv.dataset.wardId = ward.id;
                 
                 const headerDiv = document.createElement('div');
-                headerDiv.className = `${ward.color} bg-opacity-70 px-5 py-3 flex justify-between items-center border-b border-white/40`;
+                headerDiv.className = `${ward.color} bg-opacity-80 px-6 py-4 flex justify-between items-center border-b border-white/50`;
                 
                 const leftHead = document.createElement('div');
                 leftHead.className = "flex flex-col";
@@ -485,18 +554,18 @@
                 };
                 
                 const updateStamp = document.createElement('div');
-                updateStamp.className = "text-[9px] font-black uppercase tracking-widest opacity-40 -mt-1 truncate";
+                updateStamp.className = "text-[10px] font-black uppercase tracking-widest opacity-50 -mt-1 truncate";
                 updateStamp.innerText = ward.lastUpdated ? `Update: ${ward.lastUpdated}` : "NEW";
 
                 leftHead.appendChild(titleDiv);
                 leftHead.appendChild(updateStamp);
 
                 const rightHead = document.createElement('div');
-                rightHead.className = "flex items-center gap-2";
+                rightHead.className = "flex items-center gap-3";
 
                 const refreshBtn = document.createElement('button');
-                refreshBtn.className = "opacity-50 hover:opacity-100 p-1 text-gray-700 transition-all duration-300 hover:rotate-180 hover:text-blue-600";
-                refreshBtn.innerHTML = '<i class="ph-bold ph-arrows-clockwise text-2xl" title="Update Time"></i>';
+                refreshBtn.className = "opacity-40 hover:opacity-100 p-1 text-gray-700 transition-all duration-300 hover:rotate-180 hover:text-blue-600";
+                refreshBtn.innerHTML = '<i class="ph-bold ph-arrows-clockwise text-2xl" title="Confirm Update"></i>';
                 refreshBtn.onclick = (e) => { 
                     e.stopPropagation(); 
                     forceUpdateWardTime(ward.id); 
@@ -519,21 +588,22 @@
                 wardDiv.appendChild(headerDiv);
 
                 const gridContainer = document.createElement('div');
-                gridContainer.className = "p-3 grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 min-h-[70px] ward-bed-list";
+                gridContainer.className = "p-4 grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 min-h-[70px] ward-bed-list";
                 gridContainer.dataset.wardId = ward.id;
 
                 if (ward.beds && ward.beds.length > 0) {
                     ward.beds.forEach(bed => { gridContainer.appendChild(createBedElement(ward, bed)); });
                 } else {
-                    gridContainer.innerHTML = `<div class="col-span-full h-[80px] border border-dashed border-red-200 bg-red-50/20 rounded-2xl flex items-center justify-center pointer-events-none text-red-400 font-black text-2xl tracking-widest uppercase">Full</div>`;
+                    gridContainer.innerHTML = `<div class="col-span-full h-[100px] border border-dashed border-red-300 bg-red-50/20 rounded-2xl flex items-center justify-center pointer-events-none text-red-400 font-black text-3xl tracking-widest uppercase">Full</div>`;
                 }
 
                 wardDiv.appendChild(gridContainer);
                 
                 const footer = document.createElement('div');
-                footer.className = "px-5 py-2 border-t border-white/20 flex justify-end";
-                footer.innerHTML = `<button onclick="addBed('${ward.id}')" class="text-[12px] font-black text-blue-600 uppercase tracking-widest hover:scale-110 transition-transform">+ ADD</button>`;
+                footer.className = "px-6 py-3 border-t border-white/20 flex justify-end";
+                footer.innerHTML = `<button onclick="addBed('${ward.id}')" class="text-[13px] font-black text-blue-600 uppercase tracking-widest hover:scale-110 transition-transform">+ ADD BED</button>`;
                 wardDiv.appendChild(footer);
+                
                 container.appendChild(wardDiv);
             });
 
@@ -664,13 +734,13 @@
                 const vacantBeds = targetWard.beds.filter(b => b.state === 'vacant');
                 const isFull = vacantBeds.length === 0;
                 const btn = document.createElement('button');
-                btn.className = `w-full text-left px-5 py-4 rounded-2xl border transition-all flex items-center justify-between group ${isFull ? 'opacity-40 grayscale pointer-events-none' : 'border-gray-100 bg-gray-50 hover:bg-blue-50'}`;
+                btn.className = `w-full text-left px-5 py-4 rounded-2xl border transition-all flex items-center justify-between group ${isFull ? 'opacity-40 grayscale pointer-events-none' : 'border-gray-100 bg-gray-50 hover:bg-blue-50 shadow-sm'}`;
                 btn.innerHTML = `
                     <div class="flex items-center gap-3">
                         <span class="font-black text-gray-700 italic text-xl uppercase">${targetWard.name}</span>
                         ${isFull ? `<span class="text-[11px] font-black text-red-500 uppercase">Full</span>` : `<span class="bg-emerald-500 text-white text-[11px] font-black px-2 py-1 rounded uppercase">${vacantBeds.length} Vacant</span>`}
                     </div>
-                    <i class="ph-bold ph-caret-right text-gray-300"></i>`;
+                    <i class="ph-bold ph-caret-right text-gray-300 group-hover:text-blue-500 transition-colors"></i>`;
                 if (!isFull) btn.onclick = () => showVacantBedsForTransfer(targetWard.id);
                 list.appendChild(btn);
             });
@@ -679,15 +749,15 @@
         function showVacantBedsForTransfer(targetId) {
             tTargetId = targetId; const targetWard = appData.find(w => w.id === targetId);
             const list = document.getElementById('transfer-ward-list'); list.innerHTML = '';
-            document.getElementById('transfer-modal-title').innerHTML = `<div class="flex items-center gap-2 text-xl"><button onclick="renderWardListForTransfer()" class="hover:bg-gray-100 p-2 rounded-full"><i class="ph-bold ph-arrow-left text-gray-400"></i></button> Select Bed</div>`;
+            document.getElementById('transfer-modal-title').innerHTML = `<div class="flex items-center gap-2 text-xl"><button onclick="renderWardListForTransfer()" class="hover:bg-gray-100 p-2 rounded-full transition-colors"><i class="ph-bold ph-arrow-left text-gray-400"></i></button> Select Bed</div>`;
             
             let count = 1;
             targetWard.beds.forEach((bed) => {
                 if (bed.state === 'vacant') {
-                    const label = bed.text && bed.text.trim() !== "" ? bed.text : `Vacant ${count}`;
+                    const label = bed.text && bed.text.trim() !== "" ? bed.text : `Vacant Bed ${count}`;
                     const btn = document.createElement('button');
-                    btn.className = `w-full text-left px-5 py-4 rounded-2xl border border-emerald-100 bg-emerald-50/50 hover:bg-emerald-100 transition-all flex items-center justify-between mb-2 shadow-sm`;
-                    btn.innerHTML = `<div class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-emerald-400 border-2 border-white shadow-sm inline-block"></span><span class="font-black text-emerald-800 text-lg italic">${label}</span></div><i class="ph-bold ph-check text-emerald-600 opacity-0 group-hover:opacity-100 text-3xl"></i>`;
+                    btn.className = `w-full text-left px-5 py-4 rounded-2xl border border-emerald-100 bg-emerald-50/50 hover:bg-emerald-100 transition-all flex items-center justify-between mb-2 shadow-sm group`;
+                    btn.innerHTML = `<div class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-emerald-400 border-2 border-white shadow-sm inline-block"></span><span class="font-black text-emerald-800 text-lg italic uppercase">${label}</span></div><i class="ph-bold ph-check text-emerald-600 opacity-0 group-hover:opacity-100 text-3xl"></i>`;
                     btn.onclick = () => executeTransfer(bed.id);
                     list.appendChild(btn); 
                     count++;
@@ -711,48 +781,36 @@
 
         function closeTransferModal() {
             const modal = document.getElementById('transfer-modal'), content = document.getElementById('transfer-modal-content');
-            modal.classList.remove('opacity-100'); content.classList.remove('scale-100'); content.classList.add('scale-90');
+            modal.classList.remove('opacity-100'); content.classList.remove('scale-90'); content.classList.add('scale-100');
             setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); tBedId = null; tFromId = null; tTargetId = null; }, 300);
         }
 
         // --- Data Packaging Logic ---
-        // Reads raw data array and extracts SYSTEM_HISTORY if present
         function extractHistoryAndData(rawData) {
             let data = [];
             let history = [];
-            
             if (Array.isArray(rawData)) {
                 data = [...rawData]; 
             } else if (rawData && rawData.data) {
                 data = [...rawData.data];
                 history = rawData.history || [];
             }
-
-            // Find SYSTEM_HISTORY node that was packed inside the array
             const histIdx = data.findIndex(w => w.id === "SYSTEM_HISTORY");
             if (histIdx !== -1) {
                 history = data[histIdx].log || [];
-                data.splice(histIdx, 1); // Remove from rendering list
+                data.splice(histIdx, 1); 
             }
-            
             return { data: applyDefaultFlags(data), history: history };
         }
 
-        // Pack appData and historyLog into ONE array for safe Cloud Saving
         function getPayloadForSaving() {
-            // Keep history limit to 100 since the backend now supports chunking
             if (historyLog.length > 100) historyLog = historyLog.slice(0, 100);
-            
             const payload = [...appData]; 
-            payload.push({
-                id: "SYSTEM_HISTORY",
-                log: historyLog,
-                beds: [] 
-            });
+            payload.push({ id: "SYSTEM_HISTORY", log: historyLog, beds: [] });
             return payload;
         }
 
-        // --- History & Rollback Logic ---
+        // --- History Logic ---
         function saveToHistory(actionDesc = "System Update") {
             const currentState = JSON.stringify(appData);
             if (historyLog.length === 0 || historyLog[0].data !== currentState) {
@@ -760,34 +818,27 @@
                 const timeStr = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 const dateStr = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Bangkok', day: '2-digit', month: '2-digit', year: 'numeric' });
                 historyLog.unshift({ time: timeStr, dateStr: `${dateStr}, ${timeStr}`, action: actionDesc, data: currentState });
-                
-                // Allow exactly 100 histories to be stored
-                if (historyLog.length > 100) {
-                    historyLog = historyLog.slice(0, 100);
-                }
+                if (historyLog.length > 100) historyLog = historyLog.slice(0, 100);
             }
         }
 
         function openHistoryModal() {
             const list = document.getElementById('history-list');
             list.innerHTML = '';
-            
             if (historyLog.length === 0) {
-                list.innerHTML = `<div class="text-center text-gray-400 font-bold p-6 italic uppercase tracking-widest">No history available</div>`;
+                list.innerHTML = `<div class="text-center text-gray-400 font-bold p-10 italic uppercase tracking-widest">No history available</div>`;
             } else {
                 historyLog.forEach((entry, index) => {
-                    // ใช้ dateStr ถ้ามี ถ้าไม่มีให้ใช้ time แทน (เพื่อรองรับประวัติเก่าที่อาจยังไม่มีวันที่)
                     const displayTime = entry.dateStr || entry.time; 
-                    
                     const btn = document.createElement('button');
                     btn.className = `w-full text-left px-5 py-4 rounded-2xl border transition-all flex items-center justify-between group border-gray-100 bg-gray-50 hover:bg-blue-50 shadow-sm mb-2`;
                     btn.innerHTML = `
                         <div class="flex items-center gap-4">
-                            <i class="ph-bold ph-clock text-gray-400 group-hover:text-blue-500 text-3xl"></i>
+                            <i class="ph-bold ph-clock text-gray-400 group-hover:text-blue-500 text-3xl transition-colors"></i>
                             <div class="flex flex-col">
                                 <div class="flex items-center gap-3">
                                     <span class="font-black text-gray-700 text-base tracking-widest">${displayTime}</span>
-                                    ${index === 0 ? '<span class="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-black uppercase tracking-widest">Current State</span>' : ''}
+                                    ${index === 0 ? '<span class="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-black uppercase tracking-widest">Current</span>' : ''}
                                 </div>
                                 <span class="text-sm font-bold text-gray-500 mt-1">${entry.action}</span>
                             </div>
@@ -798,7 +849,6 @@
                     list.appendChild(btn);
                 });
             }
-            
             const modal = document.getElementById('history-modal'), content = document.getElementById('history-modal-content');
             modal.classList.remove('hidden'); modal.classList.add('flex');
             setTimeout(() => { modal.classList.add('opacity-100'); content.classList.remove('scale-90'); content.classList.add('scale-100'); }, 10);
@@ -810,13 +860,11 @@
             setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
         }
 
-        // --- Captcha Logic for Clearing History ---
+        // --- Captcha ---
         function generateCaptcha() {
             const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             let code = '';
-            for(let i = 0; i < 4; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
+            for(let i = 0; i < 4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
             return code;
         }
 
@@ -826,15 +874,9 @@
             document.getElementById('captcha-code-display').innerText = currentCaptchaCode;
             document.getElementById('captcha-input').value = '';
             document.getElementById('captcha-error').classList.add('hidden');
-            
             const modal = document.getElementById('captcha-modal'), content = document.getElementById('captcha-modal-content');
             modal.classList.remove('hidden'); modal.classList.add('flex');
-            setTimeout(() => { 
-                modal.classList.add('opacity-100'); 
-                content.classList.remove('scale-90'); 
-                content.classList.add('scale-100');
-                document.getElementById('captcha-input').focus();
-            }, 10);
+            setTimeout(() => { modal.classList.add('opacity-100'); content.classList.remove('scale-90'); content.classList.add('scale-100'); document.getElementById('captcha-input').focus(); }, 10);
         }
 
         function closeCaptchaModal() {
@@ -844,19 +886,13 @@
         }
 
         function verifyCaptchaAndClear() {
-            const input = document.getElementById('captcha-input').value.toUpperCase();
-            if (input === currentCaptchaCode) {
-                historyLog = [];
-                saveToHistory("History Cleared"); 
-                autoSave("History Cleared");
-                closeCaptchaModal();
-                openHistoryModal(); 
+            if (document.getElementById('captcha-input').value.toUpperCase() === currentCaptchaCode) {
+                historyLog = []; saveToHistory("History Cleared"); autoSave("History Cleared");
+                closeCaptchaModal(); openHistoryModal(); 
             } else {
                 document.getElementById('captcha-error').classList.remove('hidden');
-                document.getElementById('captcha-input').value = '';
-                document.getElementById('captcha-input').focus();
-                currentCaptchaCode = generateCaptcha();
-                document.getElementById('captcha-code-display').innerText = currentCaptchaCode;
+                document.getElementById('captcha-input').value = ''; document.getElementById('captcha-input').focus();
+                currentCaptchaCode = generateCaptcha(); document.getElementById('captcha-code-display').innerText = currentCaptchaCode;
             }
         }
 
@@ -864,18 +900,38 @@
             const displayTime = historyLog[index].dateStr || historyLog[index].time;
             if(confirm(`Are you sure you want to revert all data to the state at ${displayTime}?`)) {
                 appData = JSON.parse(historyLog[index].data);
-                renderDashboard();
-                autoSave(`Restored history to ${displayTime}`); 
-                closeHistoryModal();
+                renderDashboard(); autoSave(`Restored history to ${displayTime}`); closeHistoryModal();
             }
+        }
+
+        // --- New Ward Functions ---
+        function openAddWardModal() {
+            document.getElementById('new-ward-name').value = '';
+            const modal = document.getElementById('add-ward-modal'), content = document.getElementById('add-ward-modal-content');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            setTimeout(() => { modal.classList.add('opacity-100'); content.classList.remove('scale-90'); content.classList.add('scale-100'); document.getElementById('new-ward-name').focus(); }, 10);
+        }
+
+        function closeAddWardModal() {
+            const modal = document.getElementById('add-ward-modal'), content = document.getElementById('add-ward-modal-content');
+            modal.classList.remove('opacity-100'); content.classList.remove('scale-100'); content.classList.add('scale-90');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+
+        function confirmAddWard() {
+            const name = document.getElementById('new-ward-name').value.trim().toUpperCase();
+            if (!name) return;
+            const colors = ["bg-rose-100 border-rose-300 text-rose-900", "bg-sky-100 border-sky-300 text-sky-900", "bg-emerald-100 border-emerald-300 text-emerald-900", "bg-indigo-100 border-indigo-300 text-indigo-900", "bg-amber-100 border-amber-300 text-amber-900"];
+            appData.push({ id: generateId(), name: name, color: colors[Math.floor(Math.random() * colors.length)], beds: [], isDefault: false, lastUpdated: "" });
+            renderDashboard(); autoSave(`Created ward ${name}`);
+            closeAddWardModal();
         }
 
         // --- Core Operations ---
         function forceUpdateWardTime(wardId) {
             const w = appData.find(w => w.id === wardId);
-            updateWardTimestamp(wardId);
-            renderDashboard();
-            autoSave(`Confirmed update time for ${w ? w.name : 'Ward'}`);
+            updateWardTimestamp(wardId); renderDashboard();
+            autoSave(`Confirmed data accuracy for ${w ? w.name : 'Ward'}`);
         }
 
         function toggleBedState(bedId) {
@@ -906,15 +962,10 @@
             info.ward.beds.splice(info.bedIndex, 1);
             updateWardTimestamp(info.ward.id); renderDashboard(); autoSave(`Removed a bed from ${info.ward.name}`);
         }
-        function addWard() {
-            const colors = ["bg-rose-100 border-rose-300 text-rose-900", "bg-sky-100 border-sky-300 text-sky-900", "bg-emerald-100 border-emerald-300 text-emerald-900"];
-            appData.push({ id: generateId(), name: "NEW WARD", color: colors[Math.floor(Math.random() * colors.length)], beds: [], isDefault: false, lastUpdated: "" });
-            renderDashboard(); autoSave(`Created a new ward`);
-        }
         function deleteWard(wardId) {
             const ward = appData.find(w => w.id === wardId);
-            if (ward && ward.isDefault) { alert("Core wards cannot be removed."); return; }
-            if (confirm("Remove ward?")) { appData = appData.filter(w => w.id !== wardId); renderDashboard(); autoSave(`Deleted ward ${ward.name}`); }
+            if (ward && ward.isDefault) return;
+            if (confirm(`Remove ward "${ward.name}"?`)) { appData = appData.filter(w => w.id !== wardId); renderDashboard(); autoSave(`Deleted ward ${ward.name}`); }
         }
         function findBedInfo(bedId) {
             for (let i = 0; i < appData.length; i++) {
@@ -937,7 +988,7 @@
             }
         }
 
-        // --- Data Persistence ---
+        // --- Persistence ---
         function updateClock() {
             const now = new Date();
             const dateStr = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Bangkok', day: '2-digit', month: 'short', year: 'numeric' });
@@ -951,7 +1002,7 @@
             if (!Array.isArray(data)) return [];
             const originals = ["6ก", "6ข", "19B", "20B", "21B", "Observe ward", "ICU", "RCU", "Semi ICU", "PUI", "Cohort"];
             data.forEach(ward => {
-                if (ward.isDefault === undefined && originals.includes(ward.name)) ward.isDefault = true;
+                if (ward.isDefault === undefined && originals.some(o => (ward.name||"").toLowerCase().includes(o.toLowerCase()))) ward.isDefault = true;
                 const n = (ward.name || "").toLowerCase();
                 if (n.includes("observe") || n.includes("21b")) ward.hasGender = true;
                 if (!ward.beds) ward.beds = [];
@@ -961,16 +1012,12 @@
 
         function autoSave(actionDesc = "Auto Saved") {
             hasPendingChanges = true; const url = getApiUrl();
-            
             saveToHistory(actionDesc);
-            
             const payloadArray = getPayloadForSaving();
             localStorage.setItem('er_dashboard_data', JSON.stringify(payloadArray));
-            
             if (!url) { hasPendingChanges = false; return; }
             clearTimeout(saveTimeout);
             document.getElementById('sync-status').innerText = "UPDATING...";
-            
             saveTimeout = setTimeout(() => saveToCloud(url, payloadArray), 1500); 
         }
 
@@ -979,7 +1026,7 @@
             try {
                 const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payloadArray) });
                 if (res.ok) {
-                    document.getElementById('sync-status').innerHTML = 'Synced';
+                    document.getElementById('sync-status').innerHTML = 'SYNCED';
                     syncBlockUntil = Date.now() + 8000; 
                 }
             } catch (e) {} finally { isSaving = false; }
@@ -992,14 +1039,10 @@
                 const res = await fetch(url);
                 const rawData = await res.json();
                 if (isInteracting || isSaving || hasPendingChanges) return; 
-                
                 const extracted = extractHistoryAndData(rawData);
-
                 if (JSON.stringify(extracted.data) !== JSON.stringify(appData)) {
-                    appData = extracted.data;
-                    historyLog = extracted.history;
-                    saveToHistory("Cloud Sync Updated Data"); 
-                    renderDashboard();
+                    appData = extracted.data; historyLog = extracted.history;
+                    saveToHistory("Cloud Sync Updated Data"); renderDashboard();
                 }
             } catch (e) {}
         }
@@ -1011,12 +1054,9 @@
             try {
                 const res = await fetch(url);
                 const rawData = await res.json();
-                
                 const extracted = extractHistoryAndData(rawData);
-                
                 if (extracted.data && extracted.data.length > 0) {
-                    appData = extracted.data;
-                    historyLog = extracted.history;
+                    appData = extracted.data; historyLog = extracted.history;
                     saveToHistory("Initial Cloud Load");
                 } else {
                     appData = JSON.parse(JSON.stringify(defaultWards));
@@ -1030,8 +1070,7 @@
             const local = localStorage.getItem('er_dashboard_data');
             if (local) {
                 const extracted = extractHistoryAndData(JSON.parse(local));
-                appData = extracted.data;
-                historyLog = extracted.history;
+                appData = extracted.data; historyLog = extracted.history;
                 saveToHistory("Loaded Local Data");
             } else {
                 appData = JSON.parse(JSON.stringify(defaultWards));
@@ -1042,21 +1081,14 @@
 
         window.onload = () => {
             updateClock();
-            
-            // Initialize Font Selection
             const fontSelector = document.getElementById('font-selector');
             const savedFont = localStorage.getItem('er_dashboard_font');
-            if (savedFont && fontSelector) {
-                document.body.style.fontFamily = savedFont;
-                fontSelector.value = savedFont;
-            }
+            if (savedFont && fontSelector) { document.body.style.fontFamily = savedFont; fontSelector.value = savedFont; }
             if (fontSelector) {
                 fontSelector.addEventListener('change', (e) => {
-                    document.body.style.fontFamily = e.target.value;
-                    localStorage.setItem('er_dashboard_font', e.target.value);
+                    document.body.style.fontFamily = e.target.value; localStorage.setItem('er_dashboard_font', e.target.value);
                 });
             }
-
             if (HARDCODED_API_URL.trim() !== "") {
                 if (document.getElementById('url-input-container')) document.getElementById('url-input-container').style.display = 'none';
                 syncData(); 
