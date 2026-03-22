@@ -243,13 +243,15 @@
 
             appData.forEach(ward => {
                 const wName = (ward.name || "").toLowerCase();
+                const isObserve = wName.includes("observe");
+                const isGendered = wName.includes("observe") || wName.includes("21b");
 
                 let vacant = 0, vacantMale = 0, vacantFemale = 0, reserved = 0, discharge = 0;
                 if (ward.beds && ward.beds.length > 0) {
                     ward.beds.forEach(bed => {
                         if (bed.state === 'vacant') {
                             vacant++;
-                            if (wName.includes("observe")) {
+                            if (isGendered) {
                                 if (bed.gender === 'female') vacantFemale++;
                                 else vacantMale++;
                             }
@@ -267,7 +269,7 @@
                 let statusChips = [];
                 let plainParts = [displayName];
 
-                if (wName.includes("observe")) {
+                if (isGendered) {
                     if (vacant === 0) {
                         statusChips.push(`<span class="bg-red-500 text-white font-black px-2.5 py-0.5 rounded text-sm whitespace-nowrap min-w-[50px] text-center shadow-sm uppercase tracking-tighter">เต็ม</span>`);
                         plainParts.push(`เต็ม`);
@@ -313,7 +315,8 @@
                 
                 let rowPlain = plainParts.join(' ') + '\n';
 
-                if (wName.includes("observe")) {
+                // Move ONLY Observe ward to the end
+                if (isObserve) {
                     observeHtmlContent += rowHtml;
                     observePlainText += rowPlain;
                 } else {
