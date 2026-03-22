@@ -236,35 +236,62 @@
             const summaryContainer = document.getElementById('summary-board-container');
             const summaryContent = document.getElementById('summary-content');
             let htmlContent = '';
+            let observeHtmlContent = '';
             let plainTextToCopy = '';
+            let observePlainText = '';
             let hasValidData = false;
 
             appData.forEach(ward => {
                 const wName = (ward.name || "").toLowerCase();
-                if (wName.includes("observe")) return;
 
-                let vacant = 0, reserved = 0, discharge = 0;
+                let vacant = 0, vacantMale = 0, vacantFemale = 0, reserved = 0, discharge = 0;
                 if (ward.beds && ward.beds.length > 0) {
                     ward.beds.forEach(bed => {
-                        if (bed.state === 'vacant') vacant++;
+                        if (bed.state === 'vacant') {
+                            vacant++;
+                            if (wName.includes("observe")) {
+                                if (bed.gender === 'female') vacantFemale++;
+                                else vacantMale++;
+                            }
+                        }
                         else if (bed.state === 'reserved') reserved++;
                         else if (bed.state === 'discharge') discharge++;
                     });
-                } else if (!wName.includes("cohort")) return;
+                }
 
                 let displayName = ward.name;
                 if (wName.includes("semi")) displayName = "Semi";
                 if (wName.includes("cohort")) displayName = "Cohort";
+                if (wName.includes("observe")) displayName = "Observe";
 
                 let statusChips = [];
                 let plainParts = [displayName];
 
-                if (vacant === 0) {
-                    statusChips.push(`<span class="bg-red-500 text-white font-black px-2.5 py-0.5 rounded text-sm whitespace-nowrap min-w-[50px] text-center shadow-sm">เต็ม</span>`);
-                    plainParts.push(`เต็ม`);
+                if (wName.includes("observe")) {
+                    if (vacant === 0) {
+                        statusChips.push(`<span class="bg-red-500 text-white font-black px-2.5 py-0.5 rounded text-sm whitespace-nowrap min-w-[50px] text-center shadow-sm uppercase tracking-tighter">เต็ม</span>`);
+                        plainParts.push(`เต็ม`);
+                    } else {
+                        let vacantText = "";
+                        if (vacantMale > 0 && vacantFemale > 0) {
+                            vacantText = `ว่าง ช ${vacantMale}, ญ ${vacantFemale}`;
+                        } else if (vacantMale > 0) {
+                            vacantText = `ว่าง ช ${vacantMale}`;
+                        } else if (vacantFemale > 0) {
+                            vacantText = `ว่าง ญ ${vacantFemale}`;
+                        }
+                        
+                        statusChips.push(`<span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-sm whitespace-nowrap min-w-[50px] text-center border border-emerald-200">${vacantText}</span>`);
+                        plainParts.push(vacantText);
+                    }
                 } else {
-                    statusChips.push(`<span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-sm whitespace-nowrap min-w-[50px] text-center border border-emerald-200">ว่าง ${vacant}</span>`);
-                    plainParts.push(`ว่าง ${vacant}`);
+                    if (vacant === 0) {
+                        statusChips.push(`<span class="bg-red-500 text-white font-black px-2.5 py-0.5 rounded text-sm whitespace-nowrap min-w-[50px] text-center shadow-sm uppercase tracking-tighter">เต็ม</span>`);
+                        plainParts.push(`เต็ม`);
+                    } else {
+                        statusChips.push(`<span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-sm whitespace-nowrap min-w-[50px] text-center border border-emerald-200">ว่าง ${vacant}</span>`);
+                        plainParts.push(`ว่าง ${vacant}`);
+                    }
                 }
 
                 if (reserved > 0) {
@@ -276,23 +303,33 @@
                     plainParts.push(`Plan D/C ${discharge}`);
                 }
 
-                htmlContent += `
+                let rowHtml = `
                     <div class="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0 overflow-hidden">
-                        <span class="font-black w-20 text-gray-800 flex-shrink-0 italic tracking-tighter truncate uppercase text-lg">${displayName}</span>
+                        <span class="font-black w-24 text-gray-800 flex-shrink-0 italic tracking-tighter truncate uppercase text-lg">${displayName}</span>
                         <div class="flex gap-2 flex-wrap">
                             ${statusChips.join('')}
                         </div>
                     </div>`;
-                plainTextToCopy += plainParts.join(' ') + '\n';
+                
+                let rowPlain = plainParts.join(' ') + '\n';
+
+                if (wName.includes("observe")) {
+                    observeHtmlContent += rowHtml;
+                    observePlainText += rowPlain;
+                } else {
+                    htmlContent += rowHtml;
+                    plainTextToCopy += rowPlain;
+                }
+                
                 hasValidData = true;
             });
 
             if (hasValidData) {
-                summaryContent.innerHTML = htmlContent;
+                summaryContent.innerHTML = htmlContent + observeHtmlContent;
                 summaryContainer.classList.remove('hidden');
                 document.getElementById('copy-summary-btn').onclick = () => {
                     const el = document.createElement('textarea');
-                    el.value = plainTextToCopy.trim();
+                    el.value = (plainTextToCopy + observePlainText).trim();
                     document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
                     const btn = document.getElementById('copy-summary-btn');
                     btn.innerHTML = '<i class="ph-bold ph-check text-emerald-500 text-3xl"></i>';
