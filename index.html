@@ -776,6 +776,9 @@
                 list.innerHTML = `<div class="text-center text-gray-400 font-bold p-6 italic uppercase tracking-widest">No history available</div>`;
             } else {
                 historyLog.forEach((entry, index) => {
+                    // ใช้ dateStr ถ้ามี ถ้าไม่มีให้ใช้ time แทน (เพื่อรองรับประวัติเก่าที่อาจยังไม่มีวันที่)
+                    const displayTime = entry.dateStr || entry.time; 
+                    
                     const btn = document.createElement('button');
                     btn.className = `w-full text-left px-5 py-4 rounded-2xl border transition-all flex items-center justify-between group border-gray-100 bg-gray-50 hover:bg-blue-50 shadow-sm mb-2`;
                     btn.innerHTML = `
@@ -783,7 +786,7 @@
                             <i class="ph-bold ph-clock text-gray-400 group-hover:text-blue-500 text-3xl"></i>
                             <div class="flex flex-col">
                                 <div class="flex items-center gap-3">
-                                    <span class="font-black text-gray-700 text-xl tracking-widest">${entry.time}</span>
+                                    <span class="font-black text-gray-700 text-base tracking-widest">${displayTime}</span>
                                     ${index === 0 ? '<span class="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-black uppercase tracking-widest">Current State</span>' : ''}
                                 </div>
                                 <span class="text-sm font-bold text-gray-500 mt-1">${entry.action}</span>
@@ -858,10 +861,11 @@
         }
 
         function rollbackTo(index) {
-            if(confirm(`Are you sure you want to revert all data to the state at ${historyLog[index].time}?`)) {
+            const displayTime = historyLog[index].dateStr || historyLog[index].time;
+            if(confirm(`Are you sure you want to revert all data to the state at ${displayTime}?`)) {
                 appData = JSON.parse(historyLog[index].data);
                 renderDashboard();
-                autoSave(`Restored history to ${historyLog[index].time}`); 
+                autoSave(`Restored history to ${displayTime}`); 
                 closeHistoryModal();
             }
         }
