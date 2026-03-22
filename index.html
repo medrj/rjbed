@@ -2,28 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RJ MED BED MANAGER</title>
-    <!-- Tailwind CSS for styling -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SortableJS for mobile-friendly drag and drop -->
+    <!-- SortableJS -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- Google Fonts for Thai Font Selection -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;700&family=Chakra+Petch:wght@400;700&family=Kanit:wght@400;700&family=Mitr:wght@400;700&family=Niramit:wght@400;700&family=Pridi:wght@400;700&family=Prompt:wght@400;700&family=Sarabun:wght@400;700&family=Taviraj:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Base enlargement to 125% (20px base font) */
+        /* Base font enlargement (20px) */
         html { font-size: 20px; } 
 
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            /* High-Tech Breathing Background Animation */
             background: linear-gradient(125deg, #fce7f3 0%, #e0f2fe 35%, #dcfce7 70%, #fef3c7 100%);
             background-size: 400% 400%;
             animation: breathe-bg 15s ease infinite alternate;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         @keyframes breathe-bg {
@@ -32,7 +32,7 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* --- WOW Factor Animated Border for Summary Board --- */
+        /* WOW Factor for Summary Board */
         .wow-summary-wrapper {
             position: relative;
             border-radius: 1.5rem;
@@ -58,7 +58,6 @@
             z-index: 2;
         }
 
-        /* Hover effect for standard ward boxes */
         .ward-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -67,7 +66,7 @@
             box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.15);
         }
         
-        /* Bed Box within grid */
+        /* Bed Box Styling */
         .bed-box { 
             transition: all 0.2s ease; 
             backdrop-filter: blur(12px);
@@ -84,38 +83,18 @@
             transform: translateY(-2px); 
         }
         
-        /* Medical State Colors */
-        .state-reserved { 
-            background-color: rgba(248, 113, 113, 0.88);
-            color: #ffffff; 
-            border: 1px solid rgba(255, 255, 255, 0.5); 
-        }
-        .state-reserved .text-input { color: #ffffff; text-shadow: 0 1px 1px rgba(0,0,0,0.1); }
-        .state-reserved .color-btn { color: #fee2e2; }
-        
-        .state-vacant { 
-            background-color: rgba(134, 239, 172, 0.88);
-            color: #064e3b; 
-            border: 1px solid rgba(255, 255, 255, 0.5); 
-        }
-        .state-vacant .text-input { color: #064e3b; }
-        .state-vacant .color-btn { color: #166534; }
-        
-        .state-discharge { 
-            background-color: rgba(56, 189, 248, 0.88);
-            color: #ffffff; 
-            border: 1px solid rgba(255, 255, 255, 0.5); 
-        }
-        .state-discharge .text-input { color: #ffffff; text-shadow: 0 1px 1px rgba(0,0,0,0.1); }
-        .state-discharge .color-btn { color: #e0f2fe; }
+        /* States */
+        .state-reserved { background-color: rgba(248, 113, 113, 0.88); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.5); }
+        .state-vacant { background-color: rgba(134, 239, 172, 0.88); color: #064e3b; border: 1px solid rgba(255, 255, 255, 0.5); }
+        .state-discharge { background-color: rgba(56, 189, 248, 0.88); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.5); }
 
-        /* Dynamic Text Input: Fixed Position & Centered Padding */
+        /* Dynamic Text Input with fixed alignment */
         .text-input {
             width: 100%;
             height: 100%;
             border: 1px dashed transparent; 
             border-radius: 8px;
-            padding: 10px 85px 32px 12px; /* Fixed text position with better gutters */
+            padding: 10px 85px 32px 12px; 
             opacity: 0.95;
             transition: all 0.2s ease;
             font-size: 0.85rem; 
@@ -126,11 +105,9 @@
             overflow-y: auto;
             scrollbar-width: none;
             display: flex;
-            align-items: flex-start; /* Start from top but with better padding */
+            align-items: flex-start;
         }
-        
         .text-input::-webkit-scrollbar { display: none; }
-        
         .text-input:hover, .text-input:focus {
             opacity: 1;
             border: 1px dashed rgba(255, 255, 255, 0.6); 
@@ -138,7 +115,7 @@
             background-color: rgba(255, 255, 255, 0.15);
         }
         
-        /* Sortable styles */
+        /* Sortable */
         .sortable-ghost { opacity: 0.2 !important; }
         .sortable-drag { 
             z-index: 9999 !important;
@@ -151,32 +128,39 @@
         }
         .bed-box { animation: popIn 0.2s ease-out forwards; }
 
-        /* Scrollbar styling */
+        /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 10px; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 640px) {
+            html { font-size: 16px; }
+            .wow-summary-inner { padding: 1rem !important; }
+            #current-time { font-size: 3.5rem !important; }
+            .bed-box { height: 6.5rem; } /* Slightly taller for thumbs */
+        }
     </style>
 </head>
-<body class="p-2 md:p-4">
+<body class="p-2 md:p-6">
 
     <div class="w-full max-w-[2800px] mx-auto">
         
         <!-- Header Section -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-5 border-b border-white/40 pb-5">
-            <div class="flex flex-col">
-                <h1 class="text-3xl font-black text-gray-800 flex items-center gap-3 drop-shadow-sm italic tracking-tighter uppercase">
-                    <i class="ph-fill ph-hospital text-blue-600 text-5xl drop-shadow-md"></i>
+        <div class="flex flex-col xl:flex-row justify-between items-center mb-6 gap-6 border-b border-white/40 pb-6">
+            <div class="flex flex-col w-full xl:w-auto">
+                <h1 class="text-3xl md:text-4xl font-black text-gray-800 flex items-center gap-3 drop-shadow-sm italic tracking-tighter uppercase">
+                    <i class="ph-fill ph-hospital text-blue-600 text-5xl md:text-6xl drop-shadow-md"></i>
                     RJ MED BED MANAGER
                 </h1>
-                <div class="flex flex-wrap gap-4 mt-3 items-center">
-                    <span class="flex items-center gap-2 text-[11px] font-bold text-gray-600 uppercase tracking-tighter"><span class="w-4 h-4 rounded bg-red-400 border border-red-500 shadow-sm"></span> Reserved</span>
-                    <span class="flex items-center gap-2 text-[11px] font-bold text-gray-600 uppercase tracking-tighter"><span class="w-4 h-4 rounded bg-green-300 border border-green-500 shadow-sm"></span> Vacant</span>
-                    <span class="flex items-center gap-2 text-[11px] font-bold text-gray-600 uppercase tracking-tighter"><span class="w-4 h-4 rounded bg-sky-400 border border-sky-500 shadow-sm"></span> Plan D/C</span>
+                <div class="flex flex-wrap gap-3 mt-4 items-center">
+                    <span class="flex items-center gap-2 text-[10px] md:text-[12px] font-bold text-gray-600 uppercase tracking-tighter"><span class="w-4 h-4 rounded bg-red-400 border border-red-500 shadow-sm"></span> Reserved</span>
+                    <span class="flex items-center gap-2 text-[10px] md:text-[12px] font-bold text-gray-600 uppercase tracking-tighter"><span class="w-4 h-4 rounded bg-green-300 border border-green-500 shadow-sm"></span> Vacant</span>
+                    <span class="flex items-center gap-2 text-[10px] md:text-[12px] font-bold text-gray-600 uppercase tracking-tighter"><span class="w-4 h-4 rounded bg-sky-400 border border-sky-500 shadow-sm"></span> Plan D/C</span>
                     
-                    <!-- Font Selection Dropdown -->
-                    <div class="flex items-center gap-1.5 border-l-2 border-gray-200/50 pl-4 ml-1">
+                    <div class="flex items-center gap-1.5 border-l-2 border-gray-200/50 pl-3 ml-1">
                         <i class="ph-bold ph-text-aa text-gray-500 text-lg"></i>
-                        <select id="font-selector" class="bg-white/60 backdrop-blur-sm border border-gray-200 text-[11px] font-bold text-gray-700 uppercase tracking-tighter rounded px-2 py-1 outline-none cursor-pointer hover:bg-white/90 transition-colors">
+                        <select id="font-selector" class="bg-white/60 backdrop-blur-sm border border-gray-200 text-[10px] font-bold text-gray-700 uppercase tracking-tighter rounded px-2 py-1 outline-none cursor-pointer">
                             <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">System Default</option>
                             <option value="'Sarabun', sans-serif">Sarabun (ทางการ)</option>
                             <option value="'Kanit', sans-serif">Kanit (โมเดิร์น)</option>
@@ -190,33 +174,26 @@
                         </select>
                     </div>
 
-                    <!-- Update History Menu -->
-                    <button onclick="openHistoryModal()" class="flex items-center gap-1.5 border-l-2 border-gray-200/50 pl-4 hover:text-blue-600 transition-colors text-gray-600 cursor-pointer">
+                    <button onclick="openHistoryModal()" class="flex items-center gap-1.5 border-l-2 border-gray-200/50 pl-3 hover:text-blue-600 text-gray-600">
                         <i class="ph-bold ph-clock-counter-clockwise text-xl"></i>
-                        <span class="text-[11px] font-bold uppercase tracking-tighter">History</span>
+                        <span class="text-[10px] font-bold uppercase tracking-tighter">History</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Integrated WOW Time & Status Module -->
-            <div class="relative group min-w-[320px] md:min-w-[450px]">
+            <!-- Time & Status Module (Responsive WOW) -->
+            <div class="relative group w-full xl:w-auto">
                 <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 via-sky-400 to-indigo-600 rounded-[1.8rem] blur-md opacity-30 group-hover:opacity-50 transition duration-1000 animate-pulse"></div>
-                
-                <div class="relative bg-white/80 backdrop-blur-2xl px-10 py-6 rounded-[1.8rem] border border-white/60 shadow-2xl flex flex-col items-center md:items-end">
-                    <div id="current-time" class="text-6xl md:text-7xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-br from-blue-900 via-blue-700 to-cyan-600 font-mono drop-shadow-md select-none" style="font-variant-numeric: tabular-nums;">
-                        --:--:--
-                    </div>
-                    <div id="current-date" class="text-base md:text-lg font-bold text-gray-500 tracking-[0.3em] uppercase mt-1 opacity-80">
-                        ---
-                    </div>
-                    
+                <div class="relative bg-white/80 backdrop-blur-2xl px-6 md:px-10 py-5 rounded-[1.8rem] border border-white/60 shadow-2xl flex flex-col items-center md:items-end">
+                    <div id="current-time" class="text-5xl md:text-7xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-br from-blue-900 via-blue-700 to-cyan-600 font-mono drop-shadow-md" style="font-variant-numeric: tabular-nums;">--:--:--</div>
+                    <div id="current-date" class="text-sm md:text-lg font-bold text-gray-500 tracking-[0.3em] uppercase mt-1 opacity-80">---</div>
                     <div class="flex items-center gap-4 mt-4 pt-4 border-t border-gray-200/60 w-full justify-center md:justify-end">
                         <div class="flex items-center gap-2 bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-100 shadow-sm transition-all hover:bg-emerald-100">
                             <span class="relative flex h-3 w-3">
                               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                               <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                             </span>
-                            <div id="sync-status" class="text-[12px] font-black text-emerald-800 uppercase tracking-widest">CONNECTED</div>
+                            <div id="sync-status" class="text-[11px] font-black text-emerald-800 uppercase tracking-widest">CONNECTED</div>
                         </div>
                     </div>
                 </div>
@@ -226,116 +203,86 @@
         <!-- WOW Summary Board -->
         <div class="flex flex-col mb-8 items-stretch gap-3">
             <div id="summary-board-wrapper" class="hidden w-full wow-summary-wrapper">
-                <div id="summary-board-container" class="wow-summary-inner p-8 relative overflow-hidden">
-                    <button id="copy-summary-btn" class="absolute top-6 right-6 text-gray-400 hover:text-blue-600 bg-white/70 hover:bg-white rounded-lg p-2 transition-all border border-gray-100 shadow-sm z-10" title="Copy Summary">
+                <div id="summary-board-container" class="wow-summary-inner p-5 md:p-8 relative overflow-hidden">
+                    <button id="copy-summary-btn" class="absolute top-4 right-4 md:top-6 md:right-6 text-gray-400 hover:text-blue-600 bg-white/70 rounded-lg p-2 transition-all border border-gray-100 shadow-sm z-10">
                         <i class="ph-bold ph-copy text-2xl"></i>
                     </button>
-                    <div id="summary-content" class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-4 h-auto pr-10"></div>
+                    <div id="summary-content" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3 h-auto pr-10"></div>
                 </div>
             </div>
 
-            <!-- Database URL Config -->
-            <div id="url-input-container" class="hidden bg-white/40 backdrop-blur-md rounded-2xl shadow-sm border border-white/60 p-3 self-end max-w-sm">
+            <div id="url-input-container" class="hidden bg-white/40 backdrop-blur-md rounded-2xl border border-white/60 p-3 self-end w-full max-w-sm">
                 <div class="flex items-center">
-                    <input type="text" id="api-url" placeholder="Database URL" class="flex-1 text-[11px] border border-gray-300 rounded-l-lg px-3 py-2 focus:outline-none bg-white/80">
-                    <button onclick="syncData()" class="bg-blue-600 text-white px-4 py-2 rounded-r-lg text-[11px] font-bold hover:bg-blue-700 transition-colors">Sync</button>
+                    <input type="text" id="api-url" placeholder="Database URL" class="flex-1 text-[11px] border border-gray-300 rounded-l-lg px-3 py-2 outline-none">
+                    <button onclick="syncData()" class="bg-blue-600 text-white px-4 py-2 rounded-r-lg text-[11px] font-bold">Sync</button>
                 </div>
             </div>
         </div>
 
-        <!-- Ward Filters -->
-        <div class="flex flex-wrap gap-3 mb-6" id="ward-filter-container">
-            <button onclick="setFilter('All')" id="filter-All" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-black tracking-widest uppercase transition-all bg-blue-600 text-white shadow-lg border border-blue-600 scale-105">All Wards</button>
-            <button onclick="setFilter('ตึกทศมินทร์')" id="filter-ตึกทศมินทร์" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold tracking-widest uppercase transition-all bg-white/70 text-gray-600 hover:bg-white border border-gray-200 hover:shadow-md">ตึกทศมินทร์</button>
-            <button onclick="setFilter('ตึกนอก')" id="filter-ตึกนอก" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold tracking-widest uppercase transition-all bg-white/70 text-gray-600 hover:bg-white border border-gray-200 hover:shadow-md">ตึกนอก</button>
-            <button onclick="setFilter('ตึก COVID')" id="filter-ตึก COVID" class="filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold tracking-widest uppercase transition-all bg-white/70 text-gray-600 hover:bg-white border border-gray-200 hover:shadow-md">ตึก COVID</button>
+        <!-- Filters -->
+        <div class="flex flex-wrap gap-2 md:gap-3 mb-6" id="ward-filter-container">
+            <button onclick="setFilter('All')" id="filter-All" class="filter-btn flex-1 md:flex-none px-4 md:px-6 py-3 rounded-2xl text-[11px] md:text-sm font-black tracking-widest uppercase transition-all bg-blue-600 text-white shadow-lg border border-blue-600">All</button>
+            <button onclick="setFilter('ตึกทศมินทร์')" id="filter-ตึกทศมินทร์" class="filter-btn flex-1 md:flex-none px-4 md:px-6 py-3 rounded-2xl text-[11px] md:text-sm font-bold tracking-widest uppercase transition-all bg-white/70 text-gray-600 hover:bg-white border border-gray-200">ทศมินทร์</button>
+            <button onclick="setFilter('ตึกนอก')" id="filter-ตึกนอก" class="filter-btn flex-1 md:flex-none px-4 md:px-6 py-3 rounded-2xl text-[11px] md:text-sm font-bold tracking-widest uppercase transition-all bg-white/70 text-gray-600 hover:bg-white border border-gray-200">ตึกนอก</button>
+            <button onclick="setFilter('ตึก COVID')" id="filter-ตึก COVID" class="filter-btn flex-1 md:flex-none px-4 md:px-6 py-3 rounded-2xl text-[11px] md:text-sm font-bold tracking-widest uppercase transition-all bg-white/70 text-gray-600 hover:bg-white border border-gray-200">COVID</button>
         </div>
 
-        <!-- 2-Column Dashboard Container -->
-        <div id="dashboard-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start pb-10"></div>
+        <!-- Grid -->
+        <div id="dashboard-container" class="grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-6 items-start pb-10"></div>
 
-        <button onclick="openAddWardModal()" class="mb-10 w-full py-5 border-2 border-dashed border-blue-300 bg-white/40 backdrop-blur-sm rounded-[1.8rem] text-blue-600 font-black text-xl hover:bg-white/70 transition-all flex items-center justify-center gap-3 shadow-sm uppercase tracking-widest group">
-            <i class="ph ph-plus-circle text-3xl group-hover:scale-125 transition-transform"></i> Add New Ward
+        <button onclick="openAddWardModal()" class="mb-10 w-full py-5 border-2 border-dashed border-blue-300 bg-white/40 rounded-[1.8rem] text-blue-600 font-black text-xl hover:bg-white/70 transition-all flex items-center justify-center gap-3">
+            <i class="ph ph-plus-circle text-3xl"></i> ADD NEW WARD
         </button>
 
         <!-- New Ward Modal -->
-        <div id="add-ward-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden items-center justify-center p-4 opacity-0 transition-all duration-300">
-            <div class="bg-white border border-white/60 rounded-3xl shadow-2xl w-full max-w-sm p-8 transform scale-90 transition-all duration-300" id="add-ward-modal-content">
-                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-                    <h3 class="text-xl font-black text-blue-600 flex items-center gap-2 uppercase tracking-widest italic">
-                        <i class="ph-bold ph-plus-circle"></i> Create New Ward
-                    </h3>
-                    <button onclick="closeAddWardModal()" class="text-gray-400 bg-gray-100 rounded-full p-1.5 hover:bg-gray-200 transition-colors">
-                        <i class="ph-bold ph-x"></i>
-                    </button>
+        <div id="add-ward-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden items-center justify-center p-4">
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8" id="add-ward-modal-content">
+                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <h3 class="text-xl font-black text-blue-600 uppercase italic">New Ward</h3>
+                    <button onclick="closeAddWardModal()"><i class="ph-bold ph-x text-2xl text-gray-400"></i></button>
                 </div>
-                <div class="mb-6">
-                    <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 tracking-widest">Enter Ward Name</label>
-                    <input type="text" id="new-ward-name" class="w-full text-center font-black text-2xl border-2 border-gray-200 rounded-2xl px-4 py-4 focus:border-blue-500 focus:outline-none uppercase italic" placeholder="e.g. 22B" autocomplete="off">
-                </div>
+                <input type="text" id="new-ward-name" class="w-full text-center font-black text-2xl border-2 border-gray-200 rounded-2xl px-4 py-4 mb-6 focus:border-blue-500 outline-none uppercase italic" placeholder="Name">
                 <div class="flex gap-3">
-                    <button onclick="closeAddWardModal()" class="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors uppercase tracking-widest">Cancel</button>
-                    <button onclick="confirmAddWard()" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors uppercase tracking-widest shadow-md">Create</button>
+                    <button onclick="closeAddWardModal()" class="flex-1 py-3 bg-gray-100 font-bold rounded-xl">Cancel</button>
+                    <button onclick="confirmAddWard()" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md">Create</button>
                 </div>
             </div>
         </div>
 
         <!-- Transfer Modal -->
-        <div id="transfer-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-md z-[9999] hidden items-center justify-center p-4 opacity-0 transition-all duration-300">
-            <div class="bg-white border border-white/60 rounded-3xl shadow-2xl w-full max-w-md p-8 transform scale-90 transition-all duration-300" id="transfer-modal-content">
-                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-                    <h3 id="transfer-modal-title" class="text-2xl font-black text-gray-800 flex items-center gap-3 italic uppercase">
-                        <i class="ph-bold ph-arrows-left-right text-blue-500 text-4xl"></i> Transfer
-                    </h3>
-                    <button onclick="closeTransferModal()" class="text-gray-400 bg-gray-100 rounded-full p-2">
-                        <i class="ph-bold ph-x"></i>
-                    </button>
+        <div id="transfer-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-md z-[9999] hidden items-center justify-center p-4">
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 md:p-8" id="transfer-modal-content">
+                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <h3 id="transfer-modal-title" class="text-2xl font-black text-gray-800 uppercase italic">Transfer</h3>
+                    <button onclick="closeTransferModal()"><i class="ph-bold ph-x text-2xl text-gray-400"></i></button>
                 </div>
-                <div id="transfer-ward-list" class="flex flex-col gap-3 max-h-[55vh] overflow-y-auto pr-2"></div>
+                <div id="transfer-ward-list" class="flex flex-col gap-3 max-h-[50vh] overflow-y-auto pr-2"></div>
             </div>
         </div>
 
-        <!-- History Rollback Modal -->
-        <div id="history-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-md z-[9999] hidden items-center justify-center p-4 opacity-0 transition-all duration-300">
-            <div class="bg-white border border-white/60 rounded-3xl shadow-2xl w-full max-w-md p-8 transform scale-90 transition-all duration-300" id="history-modal-content">
-                <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-4">
-                    <div class="flex items-center gap-4">
-                        <h3 class="text-2xl font-black text-gray-800 flex items-center gap-3 italic uppercase">
-                            <i class="ph-bold ph-clock-counter-clockwise text-blue-500 text-4xl"></i> Activity History
-                        </h3>
-                        <button onclick="openCaptchaModal()" class="text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 uppercase tracking-widest" title="Clear All History">
-                            <i class="ph-bold ph-trash"></i> Clear
-                        </button>
+        <!-- History Modal -->
+        <div id="history-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-md z-[9999] hidden items-center justify-center p-4">
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 md:p-8" id="history-modal-content">
+                <div class="flex justify-between items-center mb-4 border-b pb-4">
+                    <div class="flex items-center gap-3">
+                        <h3 class="text-2xl font-black text-gray-800 uppercase italic">History</h3>
+                        <button onclick="openCaptchaModal()" class="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-1 rounded">CLEAR</button>
                     </div>
-                    <button onclick="closeHistoryModal()" class="text-gray-400 bg-gray-100 rounded-full p-2 hover:bg-gray-200 transition-colors">
-                        <i class="ph-bold ph-x"></i>
-                    </button>
+                    <button onclick="closeHistoryModal()"><i class="ph-bold ph-x text-2xl text-gray-400"></i></button>
                 </div>
-                <p class="text-sm text-gray-500 mb-6 font-bold uppercase tracking-widest italic">Select a previous state to restore (Last 100 Actions)</p>
                 <div id="history-list" class="flex flex-col gap-3 max-h-[55vh] overflow-y-auto pr-2"></div>
             </div>
         </div>
 
-        <!-- Captcha Modal for Clearing History -->
-        <div id="captcha-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden items-center justify-center p-4 opacity-0 transition-all duration-300">
-            <div class="bg-white border border-white/60 rounded-3xl shadow-2xl w-full max-w-sm p-8 transform scale-90 transition-all duration-300" id="captcha-modal-content">
-                <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-4">
-                    <h3 class="text-xl font-black text-red-600 flex items-center gap-2 uppercase tracking-widest">
-                        <i class="ph-bold ph-warning"></i> Confirm Clear
-                    </h3>
-                    <button onclick="closeCaptchaModal()" class="text-gray-400 bg-gray-100 rounded-full p-1.5 hover:bg-gray-200 transition-colors">
-                        <i class="ph-bold ph-x"></i>
-                    </button>
-                </div>
-                <p class="text-sm text-gray-600 mb-4 font-bold">To clear all history, please enter the captcha code below:</p>
-                <div class="flex justify-center items-center bg-gray-100 rounded-xl p-3 mb-4 select-none border-2 border-gray-200">
-                    <span id="captcha-code-display" class="text-3xl font-mono font-black text-gray-800 tracking-[0.3em] line-through decoration-gray-400 decoration-2"></span>
-                </div>
-                <input type="text" id="captcha-input" class="w-full text-center font-mono text-xl border-2 border-gray-200 rounded-xl px-4 py-3 mb-4 focus:border-blue-500 focus:outline-none uppercase" placeholder="Enter code" autocomplete="off" maxlength="4">
-                <p id="captcha-error" class="text-red-500 text-xs font-bold text-center mb-4 hidden uppercase tracking-widest">Incorrect code. Try again.</p>
+        <!-- Captcha Modal -->
+        <div id="captcha-modal" class="fixed inset-0 bg-slate-900/60 z-[10000] hidden items-center justify-center p-4">
+            <div class="bg-white rounded-3xl w-full max-w-xs p-8 shadow-2xl" id="captcha-modal-content">
+                <h3 class="text-lg font-black text-red-600 uppercase mb-4">Confirm Clear</h3>
+                <div class="bg-gray-100 rounded-xl p-4 mb-4 text-3xl font-mono font-black text-center tracking-widest line-through" id="captcha-code-display"></div>
+                <input type="text" id="captcha-input" class="w-full text-center text-xl border-2 border-gray-200 rounded-xl px-4 py-3 mb-4 outline-none focus:border-blue-500 uppercase" placeholder="Enter code">
                 <div class="flex gap-3">
-                    <button onclick="closeCaptchaModal()" class="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors uppercase tracking-widest">Cancel</button>
-                    <button onclick="verifyCaptchaAndClear()" class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-colors uppercase tracking-widest shadow-md">Clear History</button>
+                    <button onclick="closeCaptchaModal()" class="flex-1 py-3 font-bold">Cancel</button>
+                    <button onclick="verifyCaptchaAndClear()" class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl">Clear</button>
                 </div>
             </div>
         </div>
@@ -389,12 +336,16 @@
             }
         }
 
+        // UPDATED: Semi ICU is now part of Covid Building
         function getWardCategory(name) {
             if (!name) return "Other";
             const n = name.toLowerCase();
-            if (n.includes('19b') || n.includes('20b') || n.includes('21b') || n.includes('icu') || n.includes('semi')) return "ตึกทศมินทร์";
+            if (n.includes('19b') || n.includes('20b') || n.includes('21b') || n.includes('icu')) {
+                if (n.includes('semi')) return "ตึก COVID"; // Check Semi first
+                return "ตึกทศมินทร์";
+            }
             if (n.includes('6ก') || n.includes('6ข') || n.includes('observe') || n.includes('er')) return "ตึกนอก";
-            if (n.includes('rcu') || n.includes('pui') || n.includes('cohort')) return "ตึก COVID";
+            if (n.includes('rcu') || n.includes('pui') || n.includes('cohort') || n.includes('semi')) return "ตึก COVID";
             return "Other";
         }
 
@@ -402,9 +353,11 @@
             currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 if (btn.id === 'filter-' + filter) {
-                    btn.className = "filter-btn px-6 py-2.5 rounded-2xl text-sm font-black tracking-widest uppercase transition-all bg-blue-600 text-white shadow-lg border border-blue-600 scale-105";
+                    btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg', 'scale-105');
+                    btn.classList.remove('bg-white/70', 'text-gray-600');
                 } else {
-                    btn.className = "filter-btn px-6 py-2.5 rounded-2xl text-sm font-bold tracking-widest uppercase transition-all bg-white/70 text-gray-600 hover:bg-white border border-gray-200 hover:shadow-md";
+                    btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg', 'scale-105');
+                    btn.classList.add('bg-white/70', 'text-gray-600');
                 }
             });
             renderDashboard();
@@ -424,18 +377,12 @@
                 const isObserve = wName.includes("observe");
                 const isGendered = wName.includes("observe") || wName.includes("21b");
 
-                let vacant = 0, vacantMale = 0, vacantFemale = 0, reserved = 0, discharge = 0;
+                let v = 0, vm = 0, vf = 0, r = 0, d = 0;
                 if (ward.beds && ward.beds.length > 0) {
                     ward.beds.forEach(bed => {
-                        if (bed.state === 'vacant') {
-                            vacant++;
-                            if (isGendered) {
-                                if (bed.gender === 'female') vacantFemale++;
-                                else vacantMale++;
-                            }
-                        }
-                        else if (bed.state === 'reserved') reserved++;
-                        else if (bed.state === 'discharge') discharge++;
+                        if (bed.state === 'vacant') { v++; if (isGendered) { if (bed.gender === 'female') vf++; else vm++; } }
+                        else if (bed.state === 'reserved') r++;
+                        else if (bed.state === 'discharge') d++;
                     });
                 }
 
@@ -444,59 +391,26 @@
                 if (wName.includes("cohort")) displayName = "Cohort";
                 if (wName.includes("observe")) displayName = "Observe";
 
-                let statusChips = [];
-                let plainParts = [displayName];
+                let chips = [];
+                let pParts = [displayName];
 
-                if (isGendered) {
-                    if (vacant === 0) {
-                        statusChips.push(`<span class="bg-red-500 text-white font-black px-3 py-1 rounded text-sm whitespace-nowrap min-w-[50px] text-center shadow-sm uppercase tracking-tighter">เต็ม</span>`);
-                        plainParts.push(`เต็ม`);
-                    } else {
-                        let vacantText = "";
-                        if (vacantMale > 0 && vacantFemale > 0) vacantText = `ว่าง ช ${vacantMale}, ญ ${vacantFemale}`;
-                        else if (vacantMale > 0) vacantText = `ว่าง ช ${vacantMale}`;
-                        else if (vacantFemale > 0) vacantText = `ว่าง ญ ${vacantFemale}`;
-                        
-                        statusChips.push(`<span class="bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded text-sm whitespace-nowrap min-w-[50px] text-center border border-emerald-200">${vacantText}</span>`);
-                        plainParts.push(vacantText);
-                    }
+                if (v === 0) {
+                    chips.push(`<span class="bg-red-500 text-white font-black px-3 py-1 rounded text-sm uppercase">เต็ม</span>`);
+                    pParts.push(`เต็ม`);
                 } else {
-                    if (vacant === 0) {
-                        statusChips.push(`<span class="bg-red-500 text-white font-black px-3 py-1 rounded text-sm whitespace-nowrap min-w-[50px] text-center shadow-sm uppercase tracking-tighter">เต็ม</span>`);
-                        plainParts.push(`เต็ม`);
-                    } else {
-                        statusChips.push(`<span class="bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded text-sm whitespace-nowrap min-w-[50px] text-center border border-emerald-200">ว่าง ${vacant}</span>`);
-                        plainParts.push(`ว่าง ${vacant}`);
-                    }
+                    let vt = isGendered ? (vm > 0 && vf > 0 ? `ว่าง ช ${vm}, ญ ${vf}` : (vm > 0 ? `ว่าง ช ${vm}` : `ว่าง ญ ${vf}`)) : `ว่าง ${v}`;
+                    chips.push(`<span class="bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded text-sm border border-emerald-200">${vt}</span>`);
+                    pParts.push(vt);
                 }
 
-                if (reserved > 0) {
-                    statusChips.push(`<span class="bg-rose-100 text-rose-800 font-bold px-3 py-1 rounded text-sm whitespace-nowrap min-w-[70px] text-center border border-rose-200">จองมาแล้ว ${reserved}</span>`);
-                    plainParts.push(`จองมาแล้ว ${reserved}`);
-                }
-                if (discharge > 0) {
-                    statusChips.push(`<span class="bg-sky-100 text-sky-800 font-bold px-3 py-1 rounded text-sm whitespace-nowrap min-w-[80px] text-center border border-sky-200">Plan D/C ${discharge}</span>`);
-                    plainParts.push(`Plan D/C ${discharge}`);
-                }
+                if (r > 0) { chips.push(`<span class="bg-rose-100 text-rose-800 font-bold px-3 py-1 rounded text-sm border border-rose-200">จองมาแล้ว ${r}</span>`); pParts.push(`จองมาแล้ว ${r}`); }
+                if (d > 0) { chips.push(`<span class="bg-sky-100 text-sky-800 font-bold px-3 py-1 rounded text-sm border border-sky-200">Plan D/C ${d}</span>`); pParts.push(`Plan D/C ${d}`); }
 
-                let rowHtml = `
-                    <div class="flex items-center gap-4 py-2.5 border-b border-gray-100 last:border-0 overflow-hidden">
-                        <span class="font-black w-24 text-gray-800 flex-shrink-0 italic tracking-tighter truncate uppercase text-xl">${displayName}</span>
-                        <div class="flex gap-2.5 flex-wrap">
-                            ${statusChips.join('')}
-                        </div>
-                    </div>`;
-                
-                let rowPlain = plainParts.join(' ') + '\n';
+                let row = `<div class="flex items-center gap-4 py-2.5 border-b border-gray-100 last:border-0 overflow-hidden"><span class="font-black w-24 text-gray-800 flex-shrink-0 truncate uppercase text-xl">${displayName}</span><div class="flex gap-2.5 flex-wrap">${chips.join('')}</div></div>`;
+                let p = pParts.join(' ') + '\n';
 
-                if (isObserve) {
-                    observeHtmlContent += rowHtml;
-                    observePlainText += rowPlain;
-                } else {
-                    htmlContent += rowHtml;
-                    plainTextToCopy += rowPlain;
-                }
-                
+                if (isObserve) { observeHtmlContent += row; observePlainText += p; }
+                else { htmlContent += row; plainTextToCopy += p; }
                 hasValidData = true;
             });
 
@@ -504,600 +418,322 @@
                 summaryContent.innerHTML = htmlContent + observeHtmlContent;
                 summaryWrapper.classList.remove('hidden');
                 document.getElementById('copy-summary-btn').onclick = () => {
-                    const el = document.createElement('textarea');
-                    el.value = (plainTextToCopy + observePlainText).trim();
+                    const el = document.createElement('textarea'); el.value = (plainTextToCopy + observePlainText).trim();
                     document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
-                    const btn = document.getElementById('copy-summary-btn');
-                    btn.innerHTML = '<i class="ph-bold ph-check text-emerald-500 text-3xl"></i>';
-                    setTimeout(() => { btn.innerHTML = '<i class="ph-bold ph-copy text-2xl"></i>'; }, 2000);
+                    const b = document.getElementById('copy-summary-btn'); b.innerHTML = '<i class="ph-bold ph-check text-emerald-500 text-3xl"></i>';
+                    setTimeout(() => { b.innerHTML = '<i class="ph-bold ph-copy text-2xl"></i>'; }, 2000);
                 };
             } else summaryWrapper.classList.add('hidden');
         }
 
         function renderDashboard() {
             const container = document.getElementById('dashboard-container');
-            container.innerHTML = '';
-            sortableInstances.forEach(inst => inst.destroy());
-            sortableInstances = [];
-
-            if (!appData || appData.length === 0) {
-                container.innerHTML = `<div class="col-span-full p-20 text-center font-bold text-gray-400 uppercase tracking-widest italic text-4xl">Loading Hospital Data...</div>`;
-                return;
-            }
+            container.innerHTML = ''; sortableInstances.forEach(i => i.destroy()); sortableInstances = [];
+            if (!appData || appData.length === 0) return;
 
             appData.forEach(ward => {
                 if (currentFilter !== 'All') {
-                    const category = getWardCategory(ward.name);
-                    if (category !== currentFilter && !(currentFilter === 'Other' && category === 'Other')) {
-                        return;
-                    }
+                    const cat = getWardCategory(ward.name);
+                    if (cat !== currentFilter) return;
                 }
 
                 const wardDiv = document.createElement('div');
                 wardDiv.className = `bg-white/70 backdrop-blur-xl rounded-3xl shadow-sm border border-white/80 overflow-hidden mb-2 ward-hover`;
                 wardDiv.dataset.wardId = ward.id;
                 
-                const headerDiv = document.createElement('div');
-                headerDiv.className = `${ward.color} bg-opacity-80 px-6 py-4 flex justify-between items-center border-b border-white/50`;
+                const header = document.createElement('div');
+                header.className = `${ward.color} bg-opacity-80 px-6 py-4 flex justify-between items-center border-b border-white/50`;
                 
-                const leftHead = document.createElement('div');
-                leftHead.className = "flex flex-col";
-                const titleDiv = document.createElement('div');
-                titleDiv.className = "font-black text-2xl outline-none italic tracking-tighter uppercase";
-                titleDiv.contentEditable = "true";
-                titleDiv.innerText = ward.name;
-                titleDiv.onblur = (e) => { 
-                    if(ward.name !== e.target.innerText) {
-                        updateWardTimestamp(ward.id);
-                        updateWardName(ward.id, e.target.innerText); 
-                    }
-                };
+                const left = document.createElement('div'); left.className = "flex flex-col";
+                const title = document.createElement('div'); title.className = "font-black text-2xl outline-none italic uppercase";
+                title.contentEditable = "true"; title.innerText = ward.name;
+                title.onblur = (e) => { if(ward.name !== e.target.innerText) { updateWardTimestamp(ward.id); updateWardName(ward.id, e.target.innerText); } };
                 
-                const updateStamp = document.createElement('div');
-                updateStamp.className = "text-[10px] font-black uppercase tracking-widest opacity-50 -mt-1 truncate";
-                updateStamp.innerText = ward.lastUpdated ? `Update: ${ward.lastUpdated}` : "NEW";
+                const stamp = document.createElement('div'); stamp.className = "text-[10px] font-black uppercase opacity-50 -mt-1 truncate";
+                stamp.innerText = ward.lastUpdated ? `Update: ${ward.lastUpdated}` : "NEW";
 
-                leftHead.appendChild(titleDiv);
-                leftHead.appendChild(updateStamp);
-
-                const rightHead = document.createElement('div');
-                rightHead.className = "flex items-center gap-3";
-
-                const refreshBtn = document.createElement('button');
-                refreshBtn.className = "opacity-40 hover:opacity-100 p-1 text-gray-700 transition-all duration-300 hover:rotate-180 hover:text-blue-600";
-                refreshBtn.innerHTML = '<i class="ph-bold ph-arrows-clockwise text-2xl" title="Confirm Update"></i>';
-                refreshBtn.onclick = (e) => { 
-                    e.stopPropagation(); 
-                    forceUpdateWardTime(ward.id); 
-                };
-                rightHead.appendChild(refreshBtn);
+                left.appendChild(title); left.appendChild(stamp);
+                const right = document.createElement('div'); right.className = "flex items-center gap-3";
+                const refBtn = document.createElement('button'); refBtn.className = "opacity-40 hover:opacity-100 transition-all hover:rotate-180 hover:text-blue-600";
+                refBtn.innerHTML = '<i class="ph-bold ph-arrows-clockwise text-2xl"></i>';
+                refBtn.onclick = (e) => { e.stopPropagation(); forceUpdateWardTime(ward.id); };
 
                 if (!ward.isDefault) {
-                    const delBtn = document.createElement('button');
-                    delBtn.className = "opacity-40 hover:opacity-100 p-1 text-gray-700 transition-colors hover:text-red-600";
-                    delBtn.innerHTML = '<i class="ph-fill ph-trash text-2xl"></i>';
-                    delBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        deleteWard(ward.id);
-                    };
-                    rightHead.appendChild(delBtn);
+                    const del = document.createElement('button'); del.className = "opacity-40 hover:opacity-100 hover:text-red-600";
+                    del.innerHTML = '<i class="ph-fill ph-trash text-2xl"></i>';
+                    del.onclick = (e) => { e.stopPropagation(); deleteWard(ward.id); };
+                    right.appendChild(del);
                 }
+                right.prepend(refBtn); header.appendChild(left); header.appendChild(right); wardDiv.appendChild(header);
 
-                headerDiv.appendChild(leftHead);
-                headerDiv.appendChild(rightHead);
-                wardDiv.appendChild(headerDiv);
+                const grid = document.createElement('div'); grid.className = "p-4 grid grid-cols-2 gap-4 min-h-[70px] ward-bed-list";
+                grid.dataset.wardId = ward.id;
 
-                const gridContainer = document.createElement('div');
-                gridContainer.className = "p-4 grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 min-h-[70px] ward-bed-list";
-                gridContainer.dataset.wardId = ward.id;
+                if (ward.beds && ward.beds.length > 0) { ward.beds.forEach(bed => { grid.appendChild(createBedElement(ward, bed)); }); }
+                else { grid.innerHTML = `<div class="col-span-full h-[100px] flex items-center justify-center text-red-500 font-black text-3xl uppercase tracking-widest opacity-20">Full</div>`; }
 
-                if (ward.beds && ward.beds.length > 0) {
-                    ward.beds.forEach(bed => { gridContainer.appendChild(createBedElement(ward, bed)); });
-                } else {
-                    gridContainer.innerHTML = `<div class="col-span-full h-[100px] border border-dashed border-red-300 bg-red-50/20 rounded-2xl flex items-center justify-center pointer-events-none text-red-400 font-black text-3xl tracking-widest uppercase">Full</div>`;
-                }
-
-                wardDiv.appendChild(gridContainer);
-                
-                const footer = document.createElement('div');
-                footer.className = "px-6 py-3 border-t border-white/20 flex justify-end";
-                footer.innerHTML = `<button onclick="addBed('${ward.id}')" class="text-[13px] font-black text-blue-600 uppercase tracking-widest hover:scale-110 transition-transform">+ ADD BED</button>`;
-                wardDiv.appendChild(footer);
-                
-                container.appendChild(wardDiv);
+                wardDiv.appendChild(grid);
+                const foot = document.createElement('div'); foot.className = "px-6 py-3 border-t border-white/20 flex justify-end";
+                foot.innerHTML = `<button onclick="addBed('${ward.id}')" class="text-[13px] font-black text-blue-600 uppercase tracking-widest hover:scale-110 transition-transform">+ ADD BED</button>`;
+                wardDiv.appendChild(foot); container.appendChild(wardDiv);
             });
 
-            document.querySelectorAll('.ward-bed-list').forEach(listElement => {
-                const sortable = new Sortable(listElement, {
-                    group: 'shared-beds', animation: 120, ghostClass: 'sortable-ghost', dragClass: 'sortable-drag',
-                    delay: 500, delayOnTouchOnly: true, forceFallback: true, fallbackOnBody: true, scroll: true,
-                    filter: 'button, .color-btn, .gender-btn, .pointer-events-none',
-                    onStart: () => { isInteracting = true; document.querySelectorAll('.text-input[contenteditable="true"]').forEach(el => el.blur()); },
-                    onEnd: (evt) => { isInteracting = false; handleDragEnd(evt); }
-                });
-                sortableInstances.push(sortable);
+            document.querySelectorAll('.ward-bed-list').forEach(list => {
+                sortableInstances.push(new Sortable(list, {
+                    group: 'shared-beds', animation: 120, ghostClass: 'sortable-ghost',
+                    onStart: () => { isInteracting = true; }, onEnd: (evt) => { isInteracting = false; handleDragEnd(evt); }
+                }));
             });
             updateSummaryBoard();
         }
 
         function createBedElement(ward, bed) {
-            const bedDiv = document.createElement('div');
-            bedDiv.className = `bed-box state-${bed.state} rounded-2xl p-0 cursor-grab relative shadow-sm block`;
-            bedDiv.dataset.bedId = bed.id;
+            const div = document.createElement('div');
+            div.className = `bed-box state-${bed.state} rounded-2xl p-0 cursor-grab relative shadow-sm block`;
+            div.dataset.bedId = bed.id;
             
-            let isLongPressing = false, pressTimer, startX, startY;
-
-            const startPress = (e) => {
+            let isLong = false, timer, sx, sy;
+            const start = (e) => {
                 if (e.target.closest('button')) return; 
-                if (e.type === 'mousedown' && e.button !== 0) return; 
                 const touch = e.touches ? e.touches[0] : e;
-                startX = touch.clientX; startY = touch.clientY;
-                isLongPressing = false;
-                pressTimer = setTimeout(() => {
-                    if (bedDiv.classList.contains('sortable-drag')) return;
-                    isLongPressing = true;
-                    if (navigator.vibrate) navigator.vibrate(20); 
-                    openTransferModal(bed.id, ward.id);
-                }, 400); 
+                sx = touch.clientX; sy = touch.clientY; isLong = false;
+                timer = setTimeout(() => { isLong = true; if (navigator.vibrate) navigator.vibrate(20); openTransferModal(bed.id, ward.id); }, 400); 
             };
-            
-            const cancelPress = () => clearTimeout(pressTimer);
-            const checkMovement = (e) => {
-                if (!pressTimer) return;
-                const touch = e.touches ? e.touches[0] : e;
-                if (Math.abs(touch.clientX - startX) > 5 || Math.abs(touch.clientY - startY) > 5) cancelPress();
-            };
+            const cancel = () => clearTimeout(timer);
+            const move = (e) => { const touch = e.touches ? e.touches[0] : e; if (Math.abs(touch.clientX - sx) > 5 || Math.abs(touch.clientY - sy) > 5) cancel(); };
 
-            bedDiv.addEventListener('touchstart', startPress, {passive: true});
-            bedDiv.addEventListener('touchend', cancelPress);
-            bedDiv.addEventListener('touchmove', checkMovement, {passive: true});
-            bedDiv.addEventListener('mousedown', startPress);
-            bedDiv.addEventListener('mouseup', cancelPress);
-            bedDiv.addEventListener('mousemove', checkMovement);
+            div.addEventListener('touchstart', start, {passive: true}); div.addEventListener('touchend', cancel); div.addEventListener('touchmove', move, {passive: true});
+            div.addEventListener('mousedown', start); div.addEventListener('mouseup', cancel); div.addEventListener('mousemove', move);
 
-            const textDiv = document.createElement('div');
-            textDiv.className = "text-input font-black leading-tight cursor-text";
-            textDiv.contentEditable = "false"; textDiv.innerText = bed.text || "";
-            textDiv.onclick = (e) => {
-                if (isLongPressing) { e.preventDefault(); return; }
-                if (textDiv.contentEditable !== "true") {
-                    textDiv.contentEditable = "true"; textDiv.focus();
-                    if (textDiv.innerText.length > 0) {
-                        const r = document.createRange(), s = window.getSelection();
-                        r.selectNodeContents(textDiv); r.collapse(false); s.removeAllRanges(); s.addRange(r);
-                    }
-                }
-            };
-            textDiv.onfocus = () => { isInteracting = true; };
-            textDiv.onblur = (e) => { 
-                textDiv.contentEditable = "false"; isInteracting = false; 
-                if (bed.text !== e.target.innerText) {
-                    updateWardTimestamp(ward.id);
-                    updateBedText(bed.id, e.target.innerText); 
-                }
-            };
+            const txt = document.createElement('div'); txt.className = "text-input font-black leading-tight cursor-text";
+            txt.contentEditable = "false"; txt.innerText = bed.text || "";
+            txt.onclick = (e) => { if (isLong) { e.preventDefault(); return; } if (txt.contentEditable !== "true") { txt.contentEditable = "true"; txt.focus(); } };
+            txt.onfocus = () => { isInteracting = true; };
+            txt.onblur = (e) => { txt.contentEditable = "false"; isInteracting = false; if (bed.text !== e.target.innerText) { updateWardTimestamp(ward.id); updateBedText(bed.id, e.target.innerText); } };
 
-            const preventDrag = (e) => { if (textDiv.contentEditable === "true") e.stopPropagation(); };
-            textDiv.onmousedown = preventDrag; textDiv.ontouchstart = preventDrag;
-
-            const colorBtn = document.createElement('button');
-            colorBtn.className = "color-btn absolute top-1 right-1 text-2xl hover:scale-125 transition-transform z-10 drop-shadow-md";
+            const colorBtn = document.createElement('button'); colorBtn.className = "color-btn absolute top-1 right-1 text-2xl hover:scale-125 drop-shadow-md";
             colorBtn.innerHTML = '<i class="ph-fill ph-drop"></i>';
-            colorBtn.onclick = (e) => { 
-                e.preventDefault(); e.stopPropagation(); updateWardTimestamp(ward.id); toggleBedState(bed.id); 
-            };
+            colorBtn.onclick = (e) => { e.stopPropagation(); updateWardTimestamp(ward.id); toggleBedState(bed.id); };
 
-            const transBtn = document.createElement('button');
-            transBtn.className = "absolute bottom-1 right-8 text-base opacity-20 hover:opacity-100 z-10 p-0.5";
-            transBtn.innerHTML = '<i class="ph ph-arrows-left-right"></i>';
-            transBtn.onclick = (e) => { 
-                e.preventDefault(); e.stopPropagation(); openTransferModal(bed.id, ward.id); 
-            };
+            const trBtn = document.createElement('button'); trBtn.className = "absolute bottom-1 right-8 text-base opacity-20 hover:opacity-100 p-0.5";
+            trBtn.innerHTML = '<i class="ph ph-arrows-left-right"></i>';
+            trBtn.onclick = (e) => { e.stopPropagation(); openTransferModal(bed.id, ward.id); };
 
             if (ward.hasGender) {
-                const gBtn = document.createElement('button');
-                gBtn.className = "gender-btn absolute bottom-1 left-1.5 hover:scale-125 transition-transform z-10";
-                if (!bed.gender) bed.gender = 'male'; 
-                gBtn.innerHTML = bed.gender === 'male' ? '<i class="ph-bold ph-gender-male text-blue-600 drop-shadow-md text-3xl"></i>' : '<i class="ph-bold ph-gender-female text-pink-600 drop-shadow-md text-3xl"></i>';
-                gBtn.onclick = (e) => { 
-                    e.preventDefault(); e.stopPropagation(); updateWardTimestamp(ward.id); toggleBedGender(bed.id); 
-                };
-                bedDiv.appendChild(gBtn);
+                const g = document.createElement('button'); g.className = "absolute bottom-1 left-1.5 hover:scale-125";
+                g.innerHTML = bed.gender === 'female' ? '<i class="ph-bold ph-gender-female text-pink-600 text-3xl"></i>' : '<i class="ph-bold ph-gender-male text-blue-600 text-3xl"></i>';
+                g.onclick = (e) => { e.stopPropagation(); updateWardTimestamp(ward.id); toggleBedGender(bed.id); };
+                div.appendChild(g);
             }
 
-            const delBtn = document.createElement('button');
-            delBtn.className = "absolute bottom-1 right-1 text-base opacity-20 hover:opacity-100 z-10 p-0.5";
-            delBtn.innerHTML = '<i class="ph ph-trash"></i>'; 
-            delBtn.onclick = (e) => { 
-                e.preventDefault(); e.stopPropagation(); updateWardTimestamp(ward.id); deleteBed(bed.id); 
-            };
+            const del = document.createElement('button'); del.className = "absolute bottom-1 right-1 text-base opacity-20 hover:opacity-100 p-0.5";
+            del.innerHTML = '<i class="ph ph-trash"></i>';
+            del.onclick = (e) => { e.stopPropagation(); updateWardTimestamp(ward.id); deleteBed(bed.id); };
 
-            bedDiv.appendChild(textDiv); bedDiv.appendChild(colorBtn); bedDiv.appendChild(transBtn); bedDiv.appendChild(delBtn);
-            return bedDiv;
+            div.appendChild(txt); div.appendChild(colorBtn); div.appendChild(trBtn); div.appendChild(del); return div;
         }
 
-        let tBedId = null, tFromId = null, tTargetId = null;
-
-        function openTransferModal(bedId, currentWardId) {
-            tBedId = bedId; tFromId = currentWardId; tTargetId = null;
-            renderWardListForTransfer();
-            const modal = document.getElementById('transfer-modal'), content = document.getElementById('transfer-modal-content');
-            modal.classList.remove('hidden'); modal.classList.add('flex');
-            setTimeout(() => { modal.classList.add('opacity-100'); content.classList.remove('scale-90'); content.classList.add('scale-100'); }, 10);
-        }
-
-        function renderWardListForTransfer() {
-            const list = document.getElementById('transfer-ward-list'); list.innerHTML = '';
-            document.getElementById('transfer-modal-title').innerHTML = `<i class="ph-bold ph-arrows-left-right text-blue-500 text-4xl"></i> Transfer`;
-            appData.forEach(targetWard => {
-                if (targetWard.id === tFromId) return;
-                const vacantBeds = targetWard.beds.filter(b => b.state === 'vacant');
-                const isFull = vacantBeds.length === 0;
-                const btn = document.createElement('button');
-                btn.className = `w-full text-left px-5 py-4 rounded-2xl border transition-all flex items-center justify-between group ${isFull ? 'opacity-40 grayscale pointer-events-none' : 'border-gray-100 bg-gray-50 hover:bg-blue-50 shadow-sm'}`;
-                btn.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <span class="font-black text-gray-700 italic text-xl uppercase">${targetWard.name}</span>
-                        ${isFull ? `<span class="text-[11px] font-black text-red-500 uppercase">Full</span>` : `<span class="bg-emerald-500 text-white text-[11px] font-black px-2 py-1 rounded uppercase">${vacantBeds.length} Vacant</span>`}
-                    </div>
-                    <i class="ph-bold ph-caret-right text-gray-300 group-hover:text-blue-500 transition-colors"></i>`;
-                if (!isFull) btn.onclick = () => showVacantBedsForTransfer(targetWard.id);
-                list.appendChild(btn);
-            });
-        }
-
-        function showVacantBedsForTransfer(targetId) {
-            tTargetId = targetId; const targetWard = appData.find(w => w.id === targetId);
-            const list = document.getElementById('transfer-ward-list'); list.innerHTML = '';
-            document.getElementById('transfer-modal-title').innerHTML = `<div class="flex items-center gap-2 text-xl"><button onclick="renderWardListForTransfer()" class="hover:bg-gray-100 p-2 rounded-full transition-colors"><i class="ph-bold ph-arrow-left text-gray-400"></i></button> Select Bed</div>`;
-            
-            let count = 1;
-            targetWard.beds.forEach((bed) => {
-                if (bed.state === 'vacant') {
-                    const label = bed.text && bed.text.trim() !== "" ? bed.text : `Vacant Bed ${count}`;
-                    const btn = document.createElement('button');
-                    btn.className = `w-full text-left px-5 py-4 rounded-2xl border border-emerald-100 bg-emerald-50/50 hover:bg-emerald-100 transition-all flex items-center justify-between mb-2 shadow-sm group`;
-                    btn.innerHTML = `<div class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-emerald-400 border-2 border-white shadow-sm inline-block"></span><span class="font-black text-emerald-800 text-lg italic uppercase">${label}</span></div><i class="ph-bold ph-check text-emerald-600 opacity-0 group-hover:opacity-100 text-3xl"></i>`;
-                    btn.onclick = () => executeTransfer(bed.id);
-                    list.appendChild(btn); 
-                    count++;
-                }
-            });
-        }
-
-        function executeTransfer(targetBedId) {
-            const fromWard = appData.find(w => w.id === tFromId), toWard = appData.find(w => w.id === tTargetId);
-            if (fromWard && toWard) {
-                const sBed = fromWard.beds.find(b => b.id === tBedId), tBed = toWard.beds.find(b => b.id === targetBedId);
-                if (sBed && tBed) {
-                    tBed.text = sBed.text; tBed.state = sBed.state; tBed.gender = toWard.hasGender ? (sBed.gender || 'male') : undefined;
-                    sBed.text = ""; sBed.state = "vacant"; sBed.gender = fromWard.hasGender ? 'male' : undefined;
-                    updateWardTimestamp(tFromId); updateWardTimestamp(tTargetId);
-                    renderDashboard(); autoSave(`Transferred patient from ${fromWard.name} to ${toWard.name}`);
-                }
-            }
-            closeTransferModal();
-        }
-
-        function closeTransferModal() {
-            const modal = document.getElementById('transfer-modal'), content = document.getElementById('transfer-modal-content');
-            modal.classList.remove('opacity-100'); content.classList.remove('scale-90'); content.classList.add('scale-100');
-            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); tBedId = null; tFromId = null; tTargetId = null; }, 300);
-        }
-
-        // --- Data Packaging Logic ---
-        function extractHistoryAndData(rawData) {
-            let data = [];
-            let history = [];
-            if (Array.isArray(rawData)) {
-                data = [...rawData]; 
-            } else if (rawData && rawData.data) {
-                data = [...rawData.data];
-                history = rawData.history || [];
-            }
-            const histIdx = data.findIndex(w => w.id === "SYSTEM_HISTORY");
-            if (histIdx !== -1) {
-                history = data[histIdx].log || [];
-                data.splice(histIdx, 1); 
-            }
+        // Packaging
+        function extractHistoryAndData(raw) {
+            let data = [], history = [];
+            if (Array.isArray(raw)) data = [...raw]; 
+            else if (raw && raw.data) { data = [...raw.data]; history = raw.history || []; }
+            const hIdx = data.findIndex(w => w.id === "SYSTEM_HISTORY");
+            if (hIdx !== -1) { history = data[hIdx].log || []; data.splice(hIdx, 1); }
             return { data: applyDefaultFlags(data), history: history };
         }
 
         function getPayloadForSaving() {
             if (historyLog.length > 100) historyLog = historyLog.slice(0, 100);
-            const payload = [...appData]; 
-            payload.push({ id: "SYSTEM_HISTORY", log: historyLog, beds: [] });
-            return payload;
+            const p = [...appData]; p.push({ id: "SYSTEM_HISTORY", log: historyLog, beds: [] });
+            return p;
         }
 
-        // --- History Logic ---
-        function saveToHistory(actionDesc = "System Update") {
-            const currentState = JSON.stringify(appData);
-            if (historyLog.length === 0 || historyLog[0].data !== currentState) {
+        function saveToHistory(action) {
+            const state = JSON.stringify(appData);
+            if (historyLog.length === 0 || historyLog[0].data !== state) {
                 const now = new Date();
-                const timeStr = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                const dateStr = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Bangkok', day: '2-digit', month: '2-digit', year: 'numeric' });
-                historyLog.unshift({ time: timeStr, dateStr: `${dateStr}, ${timeStr}`, action: actionDesc, data: currentState });
+                const t = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                const d = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Bangkok', day: '2-digit', month: '2-digit', year: 'numeric' });
+                historyLog.unshift({ time: t, dateStr: `${d}, ${t}`, action: action, data: state });
                 if (historyLog.length > 100) historyLog = historyLog.slice(0, 100);
             }
         }
 
+        // Modals
         function openHistoryModal() {
-            const list = document.getElementById('history-list');
-            list.innerHTML = '';
-            if (historyLog.length === 0) {
-                list.innerHTML = `<div class="text-center text-gray-400 font-bold p-10 italic uppercase tracking-widest">No history available</div>`;
-            } else {
-                historyLog.forEach((entry, index) => {
-                    const displayTime = entry.dateStr || entry.time; 
-                    const btn = document.createElement('button');
-                    btn.className = `w-full text-left px-5 py-4 rounded-2xl border transition-all flex items-center justify-between group border-gray-100 bg-gray-50 hover:bg-blue-50 shadow-sm mb-2`;
-                    btn.innerHTML = `
-                        <div class="flex items-center gap-4">
-                            <i class="ph-bold ph-clock text-gray-400 group-hover:text-blue-500 text-3xl transition-colors"></i>
-                            <div class="flex flex-col">
-                                <div class="flex items-center gap-3">
-                                    <span class="font-black text-gray-700 text-base tracking-widest">${displayTime}</span>
-                                    ${index === 0 ? '<span class="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-black uppercase tracking-widest">Current</span>' : ''}
-                                </div>
-                                <span class="text-sm font-bold text-gray-500 mt-1">${entry.action}</span>
-                            </div>
-                        </div>
-                        <span class="text-sm font-black text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-widest">Restore</span>
-                    `;
-                    btn.onclick = () => rollbackTo(index);
-                    list.appendChild(btn);
-                });
-            }
-            const modal = document.getElementById('history-modal'), content = document.getElementById('history-modal-content');
-            modal.classList.remove('hidden'); modal.classList.add('flex');
-            setTimeout(() => { modal.classList.add('opacity-100'); content.classList.remove('scale-90'); content.classList.add('scale-100'); }, 10);
+            const l = document.getElementById('history-list'); l.innerHTML = '';
+            if (historyLog.length === 0) { l.innerHTML = `<div class="text-center text-gray-400 p-10 font-bold">No history available</div>`; }
+            else { historyLog.forEach((entry, i) => {
+                const btn = document.createElement('button'); btn.className = `w-full text-left px-5 py-4 rounded-2xl border bg-gray-50 hover:bg-blue-50 mb-2 flex items-center justify-between group`;
+                btn.innerHTML = `<div class="flex items-center gap-4"><i class="ph-bold ph-clock text-gray-400 group-hover:text-blue-500 text-3xl"></i><div class="flex flex-col"><span class="font-black text-gray-700 text-base">${entry.dateStr || entry.time}</span><span class="text-sm font-bold text-gray-500 mt-1">${entry.action}</span></div></div><span class="text-[10px] font-black text-blue-500 opacity-0 group-hover:opacity-100 uppercase">Restore</span>`;
+                btn.onclick = () => rollbackTo(i); l.appendChild(btn);
+            }); }
+            const m = document.getElementById('history-modal'); m.classList.remove('hidden'); m.classList.add('flex');
+            setTimeout(() => m.classList.add('opacity-100'), 10);
         }
-
-        function closeHistoryModal() {
-            const modal = document.getElementById('history-modal'), content = document.getElementById('history-modal-content');
-            modal.classList.remove('opacity-100'); content.classList.remove('scale-100'); content.classList.add('scale-90');
-            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
-        }
-
-        // --- Captcha ---
-        function generateCaptcha() {
-            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            let code = '';
-            for(let i = 0; i < 4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-            return code;
-        }
+        function closeHistoryModal() { const m = document.getElementById('history-modal'); m.classList.remove('opacity-100'); setTimeout(() => m.classList.add('hidden'), 300); }
 
         function openCaptchaModal() {
-            if (historyLog.length === 0) return; 
-            currentCaptchaCode = generateCaptcha();
+            if (historyLog.length === 0) return;
+            currentCaptchaCode = Array.from({length:4}, () => '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random()*36)]).join('');
             document.getElementById('captcha-code-display').innerText = currentCaptchaCode;
             document.getElementById('captcha-input').value = '';
-            document.getElementById('captcha-error').classList.add('hidden');
-            const modal = document.getElementById('captcha-modal'), content = document.getElementById('captcha-modal-content');
-            modal.classList.remove('hidden'); modal.classList.add('flex');
-            setTimeout(() => { modal.classList.add('opacity-100'); content.classList.remove('scale-90'); content.classList.add('scale-100'); document.getElementById('captcha-input').focus(); }, 10);
+            const m = document.getElementById('captcha-modal'); m.classList.remove('hidden'); m.classList.add('flex');
         }
-
-        function closeCaptchaModal() {
-            const modal = document.getElementById('captcha-modal'), content = document.getElementById('captcha-modal-content');
-            modal.classList.remove('opacity-100'); content.classList.remove('scale-100'); content.classList.add('scale-90');
-            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
-        }
-
+        function closeCaptchaModal() { document.getElementById('captcha-modal').classList.add('hidden'); }
         function verifyCaptchaAndClear() {
             if (document.getElementById('captcha-input').value.toUpperCase() === currentCaptchaCode) {
                 historyLog = []; saveToHistory("History Cleared"); autoSave("History Cleared");
                 closeCaptchaModal(); openHistoryModal(); 
-            } else {
-                document.getElementById('captcha-error').classList.remove('hidden');
-                document.getElementById('captcha-input').value = ''; document.getElementById('captcha-input').focus();
-                currentCaptchaCode = generateCaptcha(); document.getElementById('captcha-code-display').innerText = currentCaptchaCode;
-            }
+            } else openCaptchaModal();
         }
 
-        function rollbackTo(index) {
-            const displayTime = historyLog[index].dateStr || historyLog[index].time;
-            if(confirm(`Are you sure you want to revert all data to the state at ${displayTime}?`)) {
-                appData = JSON.parse(historyLog[index].data);
-                renderDashboard(); autoSave(`Restored history to ${displayTime}`); closeHistoryModal();
-            }
-        }
-
-        // --- New Ward Functions ---
-        function openAddWardModal() {
-            document.getElementById('new-ward-name').value = '';
-            const modal = document.getElementById('add-ward-modal'), content = document.getElementById('add-ward-modal-content');
-            modal.classList.remove('hidden'); modal.classList.add('flex');
-            setTimeout(() => { modal.classList.add('opacity-100'); content.classList.remove('scale-90'); content.classList.add('scale-100'); document.getElementById('new-ward-name').focus(); }, 10);
-        }
-
-        function closeAddWardModal() {
-            const modal = document.getElementById('add-ward-modal'), content = document.getElementById('add-ward-modal-content');
-            modal.classList.remove('opacity-100'); content.classList.remove('scale-100'); content.classList.add('scale-90');
-            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
-        }
-
+        function openAddWardModal() { document.getElementById('new-ward-name').value = ''; const m = document.getElementById('add-ward-modal'); m.classList.remove('hidden'); m.classList.add('flex'); }
+        function closeAddWardModal() { document.getElementById('add-ward-modal').classList.add('hidden'); }
         function confirmAddWard() {
-            const name = document.getElementById('new-ward-name').value.trim().toUpperCase();
-            if (!name) return;
-            const colors = ["bg-rose-100 border-rose-300 text-rose-900", "bg-sky-100 border-sky-300 text-sky-900", "bg-emerald-100 border-emerald-300 text-emerald-900", "bg-indigo-100 border-indigo-300 text-indigo-900", "bg-amber-100 border-amber-300 text-amber-900"];
-            appData.push({ id: generateId(), name: name, color: colors[Math.floor(Math.random() * colors.length)], beds: [], isDefault: false, lastUpdated: "" });
-            renderDashboard(); autoSave(`Created ward ${name}`);
-            closeAddWardModal();
+            const n = document.getElementById('new-ward-name').value.trim().toUpperCase(); if (!n) return;
+            const c = ["bg-rose-100 border-rose-300 text-rose-900", "bg-sky-100 border-sky-300 text-sky-900", "bg-emerald-100 border-emerald-300 text-emerald-900"];
+            appData.push({ id: generateId(), name: n, color: c[Math.floor(Math.random()*3)], beds: [], isDefault: false, lastUpdated: "" });
+            renderDashboard(); autoSave(`Created ward ${n}`); closeAddWardModal();
         }
 
-        // --- Core Operations ---
-        function forceUpdateWardTime(wardId) {
-            const w = appData.find(w => w.id === wardId);
-            updateWardTimestamp(wardId); renderDashboard();
-            autoSave(`Confirmed data accuracy for ${w ? w.name : 'Ward'}`);
+        function rollbackTo(idx) {
+            const t = historyLog[idx].dateStr || historyLog[idx].time;
+            if(confirm(`Restore state at ${t}?`)) { appData = JSON.parse(historyLog[idx].data); renderDashboard(); autoSave(`Restored to ${t}`); closeHistoryModal(); }
         }
 
-        function toggleBedState(bedId) {
-            const info = findBedInfo(bedId); if (!info) return;
-            info.bed.state = cycleState(info.bed.state);
-            renderDashboard(); autoSave(`Changed status to ${info.bed.state.toUpperCase()} in ${info.ward.name}`);
+        // Transfers
+        let tBed = null, tFrom = null, tTarget = null;
+        function openTransferModal(b, f) { tBed = b; tFrom = f; renderTList(); const m = document.getElementById('transfer-modal'); m.classList.remove('hidden'); m.classList.add('flex'); }
+        function closeTransferModal() { document.getElementById('transfer-modal').classList.add('hidden'); }
+        function renderTList() {
+            const l = document.getElementById('transfer-ward-list'); l.innerHTML = '';
+            appData.forEach(w => {
+                if (w.id === tFrom) return;
+                const vac = w.beds.filter(b => b.state === 'vacant').length;
+                const btn = document.createElement('button'); btn.className = `w-full text-left px-5 py-4 rounded-2xl border bg-gray-50 hover:bg-blue-50 flex items-center justify-between group ${vac === 0 ? 'opacity-40 grayscale pointer-events-none' : ''}`;
+                btn.innerHTML = `<div><span class="font-black text-gray-700 italic text-xl uppercase">${w.name}</span><span class="ml-3 text-[10px] bg-emerald-500 text-white px-2 py-1 rounded uppercase">${vac} Vacant</span></div><i class="ph-bold ph-caret-right text-gray-300"></i>`;
+                if(vac > 0) btn.onclick = () => showTDetails(w.id); l.appendChild(btn);
+            });
         }
-        function toggleBedGender(bedId) {
-            const info = findBedInfo(bedId); if (!info) return;
-            info.bed.gender = (info.bed.gender === 'female') ? 'male' : 'female';
-            renderDashboard(); autoSave(`Changed gender to ${info.bed.gender.toUpperCase()} in ${info.ward.name}`);
+        function showTDetails(target) {
+            tTarget = target; const w = appData.find(x => x.id === target);
+            const l = document.getElementById('transfer-ward-list'); l.innerHTML = '';
+            document.getElementById('transfer-modal-title').innerHTML = `<button onclick="renderTList()"><i class="ph-bold ph-arrow-left"></i></button> Select Bed`;
+            w.beds.forEach(b => {
+                if (b.state === 'vacant') {
+                    const btn = document.createElement('button'); btn.className = `w-full text-left px-5 py-4 rounded-2xl border border-emerald-100 bg-emerald-50 mb-2 flex items-center justify-between`;
+                    btn.innerHTML = `<span class="font-black text-emerald-800 text-lg italic uppercase">${b.text || 'Vacant Bed'}</span><i class="ph-bold ph-check text-emerald-600 opacity-0 group-hover:opacity-100 text-3xl"></i>`;
+                    btn.onclick = () => {
+                        const sB = appData.find(x => x.id === tFrom).beds.find(x => x.id === tBed);
+                        b.text = sB.text; b.state = sB.state; b.gender = w.hasGender ? (sB.gender || 'male') : undefined;
+                        sB.text = ""; sB.state = "vacant"; sB.gender = appData.find(x => x.id === tFrom).hasGender ? 'male' : undefined;
+                        updateWardTimestamp(tFrom); updateWardTimestamp(tTarget); renderDashboard(); autoSave(`Transferred to ${w.name}`); closeTransferModal();
+                    };
+                    l.appendChild(btn);
+                }
+            });
         }
-        function updateBedText(bedId, text) {
-            const info = findBedInfo(bedId); if (info) { info.bed.text = text; autoSave(`Updated patient info in ${info.ward.name}`); }
-        }
-        function updateWardName(wardId, name) {
-            const ward = appData.find(w => w.id === wardId);
-            if (ward && ward.name !== name) { ward.name = name; renderDashboard(); autoSave(`Renamed ward to ${name}`); }
-        }
-        function addBed(wardId) {
-            const ward = appData.find(w => w.id === wardId); if (!ward) return;
-            if (!ward.beds) ward.beds = [];
-            ward.beds.push({ id: generateId(), text: "", state: "vacant", gender: ward.hasGender ? "male" : undefined });
-            updateWardTimestamp(wardId); renderDashboard(); autoSave(`Added a new bed to ${ward.name}`);
-        }
-        function deleteBed(bedId) {
-            const info = findBedInfo(bedId); if (!info) return;
-            info.ward.beds.splice(info.bedIndex, 1);
-            updateWardTimestamp(info.ward.id); renderDashboard(); autoSave(`Removed a bed from ${info.ward.name}`);
-        }
-        function deleteWard(wardId) {
-            const ward = appData.find(w => w.id === wardId);
-            if (ward && ward.isDefault) return;
-            if (confirm(`Remove ward "${ward.name}"?`)) { appData = appData.filter(w => w.id !== wardId); renderDashboard(); autoSave(`Deleted ward ${ward.name}`); }
-        }
-        function findBedInfo(bedId) {
-            for (let i = 0; i < appData.length; i++) {
-                if (!appData[i].beds) continue;
-                const idx = appData[i].beds.findIndex(b => b.id === bedId);
-                if (idx !== -1) return { ward: appData[i], bed: appData[i].beds[idx], bedIndex: idx };
-            }
-            return null;
-        }
+
+        // Operations
+        function forceUpdateWardTime(id) { updateWardTimestamp(id); renderDashboard(); autoSave(`Updated time for ${appData.find(x => x.id === id).name}`); }
+        function toggleBedState(id) { const i = findBed(id); i.bed.state = cycleState(i.bed.state); renderDashboard(); autoSave(`State ${i.bed.state} in ${i.ward.name}`); }
+        function toggleBedGender(id) { const i = findBed(id); i.bed.gender = i.bed.gender === 'female' ? 'male' : 'female'; renderDashboard(); autoSave(`Gender ${i.bed.gender} in ${i.ward.name}`); }
+        function updateBedText(id, t) { const i = findBed(id); if(i) { i.bed.text = t; autoSave(`Edited ${i.ward.name}`); } }
+        function updateWardName(id, n) { const w = appData.find(x => x.id === id); if(w) { w.name = n; renderDashboard(); autoSave(`Renamed ${n}`); } }
+        function addBed(id) { const w = appData.find(x => x.id === id); if(!w.beds) w.beds = []; w.beds.push({ id: generateId(), text: "", state: "vacant", gender: w.hasGender ? "male" : undefined }); updateWardTimestamp(id); renderDashboard(); autoSave(`New Bed in ${w.name}`); }
+        function deleteBed(id) { const i = findBed(id); i.ward.beds.splice(i.idx, 1); updateWardTimestamp(i.ward.id); renderDashboard(); autoSave(`Removed Bed in ${i.ward.name}`); }
+        function deleteWard(id) { const w = appData.find(x => x.id === id); if(confirm(`Delete ${w.name}?`)) { appData = appData.filter(x => x.id !== id); renderDashboard(); autoSave(`Deleted ${w.name}`); } }
+        function findBed(id) { for(let w of appData) { let i = w.beds.findIndex(b => b.id === id); if(i !== -1) return { ward: w, bed: w.beds[i], idx: i }; } return null; }
         function handleDragEnd(evt) {
-            const fromWard = appData.find(w => w.id === evt.from.dataset.wardId), toWard = appData.find(w => w.id === evt.to.dataset.wardId);
-            if (fromWard && toWard) {
-                const [moved] = fromWard.beds.splice(evt.oldIndex, 1);
-                if (toWard.hasGender && !moved.gender) moved.gender = 'male';
-                toWard.beds.splice(evt.newIndex, 0, moved);
-                updateWardTimestamp(fromWard.id); updateWardTimestamp(toWard.id);
-                renderDashboard(); 
-                if (fromWard.id === toWard.id) autoSave(`Reordered beds in ${fromWard.name}`);
-                else autoSave(`Moved bed from ${fromWard.name} to ${toWard.name}`);
+            const fW = appData.find(w => w.id === evt.from.dataset.wardId), tW = appData.find(w => w.id === evt.to.dataset.wardId);
+            if (fW && tW) {
+                const [moved] = fW.beds.splice(evt.oldIndex, 1);
+                if (tW.hasGender && !moved.gender) moved.gender = 'male';
+                tW.beds.splice(evt.newIndex, 0, moved);
+                updateWardTimestamp(fW.id); updateWardTimestamp(tW.id); renderDashboard();
+                autoSave(fW.id === tW.id ? `Reordered ${fW.name}` : `Moved ${fW.name} to ${tW.name}`);
             }
         }
 
-        // --- Persistence ---
+        // Persistence
         function updateClock() {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Bangkok', day: '2-digit', month: 'short', year: 'numeric' });
-            const timeStr = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-            if(document.getElementById('current-date')) document.getElementById('current-date').innerText = dateStr;
-            if(document.getElementById('current-time')) document.getElementById('current-time').innerText = timeStr;
+            const n = new Date();
+            const d = n.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const t = n.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            if(document.getElementById('current-date')) document.getElementById('current-date').innerText = d;
+            if(document.getElementById('current-time')) document.getElementById('current-time').innerText = t;
         }
-        setInterval(updateClock, 1000); 
+        setInterval(updateClock, 1000);
 
         function applyDefaultFlags(data) {
-            if (!Array.isArray(data)) return [];
             const originals = ["6ก", "6ข", "19B", "20B", "21B", "Observe ward", "ICU", "RCU", "Semi ICU", "PUI", "Cohort"];
-            data.forEach(ward => {
-                if (ward.isDefault === undefined && originals.some(o => (ward.name||"").toLowerCase().includes(o.toLowerCase()))) ward.isDefault = true;
-                const n = (ward.name || "").toLowerCase();
-                if (n.includes("observe") || n.includes("21b")) ward.hasGender = true;
-                if (!ward.beds) ward.beds = [];
+            data.forEach(w => {
+                if (w.isDefault === undefined && originals.some(o => (w.name||"").toLowerCase().includes(o.toLowerCase()))) w.isDefault = true;
+                const n = (w.name || "").toLowerCase();
+                if (n.includes("observe") || n.includes("21b")) w.hasGender = true;
+                if (!w.beds) w.beds = [];
             });
             return data;
         }
 
-        function autoSave(actionDesc = "Auto Saved") {
+        function autoSave(desc = "Auto Saved") {
             hasPendingChanges = true; const url = getApiUrl();
-            saveToHistory(actionDesc);
-            const payloadArray = getPayloadForSaving();
-            localStorage.setItem('er_dashboard_data', JSON.stringify(payloadArray));
-            if (!url) { hasPendingChanges = false; return; }
+            saveToHistory(desc);
+            const payload = getPayloadForSaving();
+            localStorage.setItem('er_dashboard_data', JSON.stringify(payload));
+            if (!url) return;
             clearTimeout(saveTimeout);
-            document.getElementById('sync-status').innerText = "UPDATING...";
-            saveTimeout = setTimeout(() => saveToCloud(url, payloadArray), 1500); 
+            document.getElementById('sync-status').innerText = "SAVING...";
+            saveTimeout = setTimeout(() => saveToCloud(url, payload), 1500); 
         }
 
-        async function saveToCloud(url, payloadArray) {
-            hasPendingChanges = false; isSaving = true; 
+        async function saveToCloud(url, payload) {
+            isSaving = true;
             try {
-                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payloadArray) });
-                if (res.ok) {
-                    document.getElementById('sync-status').innerHTML = 'SYNCED';
-                    syncBlockUntil = Date.now() + 8000; 
-                }
-            } catch (e) {} finally { isSaving = false; }
+                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
+                if (res.ok) { document.getElementById('sync-status').innerHTML = 'SYNCED'; syncBlockUntil = Date.now() + 8000; }
+            } catch (e) {} finally { isSaving = false; hasPendingChanges = false; }
         }
 
         async function backgroundSync() {
             const url = getApiUrl();
             if (!url || isInteracting || isSaving || hasPendingChanges || Date.now() < syncBlockUntil) return;
             try {
-                const res = await fetch(url);
-                const rawData = await res.json();
+                const res = await fetch(url); const raw = await res.json();
                 if (isInteracting || isSaving || hasPendingChanges) return; 
-                const extracted = extractHistoryAndData(rawData);
-                if (JSON.stringify(extracted.data) !== JSON.stringify(appData)) {
-                    appData = extracted.data; historyLog = extracted.history;
-                    saveToHistory("Cloud Sync Updated Data"); renderDashboard();
-                }
+                const ext = extractHistoryAndData(raw);
+                if (JSON.stringify(ext.data) !== JSON.stringify(appData)) { appData = ext.data; historyLog = ext.history; renderDashboard(); }
             } catch (e) {}
         }
-        setInterval(backgroundSync, 3000);
+        setInterval(backgroundSync, 5000);
 
         async function syncData() {
-            const url = getApiUrl();
-            if (!url) return;
+            const url = getApiUrl(); if (!url) return;
             try {
-                const res = await fetch(url);
-                const rawData = await res.json();
-                const extracted = extractHistoryAndData(rawData);
-                if (extracted.data && extracted.data.length > 0) {
-                    appData = extracted.data; historyLog = extracted.history;
-                    saveToHistory("Initial Cloud Load");
-                } else {
-                    appData = JSON.parse(JSON.stringify(defaultWards));
-                    saveToHistory("Initialized Empty Wards");
-                }
+                const res = await fetch(url); const raw = await res.json();
+                const ext = extractHistoryAndData(raw);
+                if (ext.data && ext.data.length > 0) { appData = ext.data; historyLog = ext.history; }
+                else { appData = JSON.parse(JSON.stringify(defaultWards)); }
                 renderDashboard();
-            } catch (e) { loadLocalData(); }
+            } catch (e) { loadLocal(); }
         }
 
-        function loadLocalData() {
+        function loadLocal() {
             const local = localStorage.getItem('er_dashboard_data');
-            if (local) {
-                const extracted = extractHistoryAndData(JSON.parse(local));
-                appData = extracted.data; historyLog = extracted.history;
-                saveToHistory("Loaded Local Data");
-            } else {
-                appData = JSON.parse(JSON.stringify(defaultWards));
-                saveToHistory("Loaded Local Data");
-            }
+            if (local) { const ext = extractHistoryAndData(JSON.parse(local)); appData = ext.data; historyLog = ext.history; }
+            else appData = JSON.parse(JSON.stringify(defaultWards));
             renderDashboard();
         }
 
         window.onload = () => {
             updateClock();
-            const fontSelector = document.getElementById('font-selector');
-            const savedFont = localStorage.getItem('er_dashboard_font');
-            if (savedFont && fontSelector) { document.body.style.fontFamily = savedFont; fontSelector.value = savedFont; }
-            if (fontSelector) {
-                fontSelector.addEventListener('change', (e) => {
-                    document.body.style.fontFamily = e.target.value; localStorage.setItem('er_dashboard_font', e.target.value);
-                });
-            }
-            if (HARDCODED_API_URL.trim() !== "") {
-                if (document.getElementById('url-input-container')) document.getElementById('url-input-container').style.display = 'none';
-                syncData(); 
-            } else {
-                if (document.getElementById('url-input-container')) document.getElementById('url-input-container').classList.remove('hidden');
-                const saved = localStorage.getItem('er_dashboard_url');
-                if (saved && document.getElementById('api-url')) { document.getElementById('api-url').value = saved; syncData(); }
-                else loadLocalData();
-            }
+            const sel = document.getElementById('font-selector'), f = localStorage.getItem('er_dashboard_font');
+            if (f) { document.body.style.fontFamily = f; if(sel) sel.value = f; }
+            if (sel) sel.onchange = (e) => { document.body.style.fontFamily = e.target.value; localStorage.setItem('er_dashboard_font', e.target.value); };
+            if (HARDCODED_API_URL.trim() !== "") { if(document.getElementById('url-input-container')) document.getElementById('url-input-container').style.display='none'; syncData(); }
+            else { if(document.getElementById('url-input-container')) document.getElementById('url-input-container').classList.remove('hidden'); loadLocal(); }
         };
     </script>
 </body>
